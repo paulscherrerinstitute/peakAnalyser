@@ -1,0 +1,1992 @@
+
+file {
+	name="/afs/psi.ch/group/8215/wang/epics_driver_modules/peakAnalyser/peakAnalyserApp/op/adl/peakAnalyser.adl"
+	version=030105
+}
+display {
+	object {
+		x=4
+		y=105
+		width=1340
+		height=670
+	}
+	clr=14
+	bclr=4
+	cmap=""
+	gridSpacing=5
+	gridOn=0
+	snapToGrid=0
+}
+"color map" {
+	ncolors=65
+	colors {
+		ffffff,
+		ececec,
+		dadada,
+		c8c8c8,
+		bbbbbb,
+		aeaeae,
+		9e9e9e,
+		919191,
+		858585,
+		787878,
+		696969,
+		5a5a5a,
+		464646,
+		2d2d2d,
+		000000,
+		00d800,
+		1ebb00,
+		339900,
+		2d7f00,
+		216c00,
+		fd0000,
+		de1309,
+		be190b,
+		a01207,
+		820400,
+		5893ff,
+		597ee1,
+		4b6ec7,
+		3a5eab,
+		27548d,
+		fbf34a,
+		f9da3c,
+		eeb62b,
+		e19015,
+		cd6100,
+		ffb0ff,
+		d67fe2,
+		ae4ebc,
+		8b1a96,
+		610a75,
+		a4aaff,
+		8793e2,
+		6a73c1,
+		4d52a4,
+		343386,
+		c7bb6d,
+		b79d5c,
+		a47e3c,
+		7d5627,
+		58340f,
+		99ffff,
+		73dfff,
+		4ea5f9,
+		2a63e4,
+		0a00b8,
+		ebf1b5,
+		d4db9d,
+		bbc187,
+		a6a462,
+		8b8239,
+		73ff6b,
+		52da3b,
+		3cb420,
+		289315,
+		1a7309,
+	}
+}
+rectangle {
+	object {
+		x=10
+		y=386
+		width=350
+		height=237
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+rectangle {
+	object {
+		x=386
+		y=9
+		width=575
+		height=37
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=422
+		y=16
+		width=500
+		height=25
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Scienta Analyzer - $(P)$(R)"
+	align="horiz. centered"
+}
+"text entry" {
+	object {
+		x=496
+		y=489
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)LOW_ENERGY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=496
+		y=469
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)LOW_ENERGY_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=574
+		y=489
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CENTRE_ENERGY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=574
+		y=469
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CENTRE_ENERGY_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=652
+		y=489
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)HIGH_ENERGY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=652
+		y=469
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)HIGH_ENERGY_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=808
+		y=445
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Width"
+}
+"text update" {
+	object {
+		x=808
+		y=469
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ENERGY_WIDTH_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=161
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Lens"
+}
+menu {
+	object {
+		x=563
+		y=161
+		width=150
+		height=20
+	}
+	control {
+		chan="$(P)$(R)LENS_MODE"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=752
+		y=161
+		width=150
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)LENS_MODE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=251
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Acquisition"
+}
+menu {
+	object {
+		x=563
+		y=251
+		width=150
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ACQ_MODE"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=752
+		y=251
+		width=150
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ACQ_MODE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=341
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Energy Mode"
+}
+menu {
+	object {
+		x=566
+		y=341
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ENERGY_MODE"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=674
+		y=341
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ENERGY_MODE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=189
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Detector"
+}
+menu {
+	object {
+		x=563
+		y=189
+		width=150
+		height=20
+	}
+	control {
+		chan="$(P)$(R)DETECTOR_MODE"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=752
+		y=189
+		width=150
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DETECTOR_MODE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=135
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Element Set"
+}
+"text update" {
+	object {
+		x=563
+		y=135
+		width=150
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ELEMENT_SET_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+rectangle {
+	object {
+		x=533
+		y=68
+		width=240
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=551
+		y=68
+		width=200
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Define Spectrum"
+	align="horiz. centered"
+}
+"text entry" {
+	object {
+		x=730
+		y=489
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)STEP_SIZE"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=730
+		y=469
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)STEP_SIZE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+composite {
+	object {
+		x=980
+		y=36
+		width=350
+		height=80
+	}
+	"composite name"=""
+	"composite file"="ADPlugins.adl"
+}
+composite {
+	object {
+		x=980
+		y=551
+		width=350
+		height=60
+	}
+	"composite name"=""
+	"composite file"="ADAttrFile.adl"
+}
+text {
+	object {
+		x=424
+		y=369
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Excit."
+}
+"text entry" {
+	object {
+		x=566
+		y=369
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)EXCITATION_ENERGY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=674
+		y=369
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)EXCITATION_ENERGY_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+composite {
+	object {
+		x=10
+		y=10
+		width=350
+		height=215
+	}
+	"composite name"=""
+	"composite file"="ADSetup.adl"
+}
+"message button" {
+	object {
+		x=980
+		y=8
+		width=160
+		height=25
+	}
+	control {
+		chan="$(P)$(R)ZERO_SUPPLIES"
+		clr=14
+		bclr=51
+	}
+	label="Zero Power Supply"
+	press_msg="1"
+}
+"text entry" {
+	object {
+		x=496
+		y=593
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)LOW_THETA_Y"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=496
+		y=573
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)LOW_THETA_Y_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=574
+		y=593
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CENTRE_THETA_Y"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=574
+		y=573
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CENTRE_THETA_Y_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=652
+		y=593
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)HIGH_THETA_Y"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=652
+		y=573
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)HIGH_THETA_Y_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=808
+		y=573
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)THETA_Y_WIDTH_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=730
+		y=593
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)THETA_Y_STEP_SIZE"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=730
+		y=573
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)THETA_Y_STEP_SIZE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=219
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Pass Energy"
+}
+menu {
+	object {
+		x=563
+		y=219
+		width=150
+		height=20
+	}
+	control {
+		chan="$(P)$(R)PASS_ENERGY"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=752
+		y=219
+		width=150
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)PASS_ENERGY_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=285
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sweeps"
+}
+"text entry" {
+	object {
+		x=566
+		y=284
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumExposures"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=674
+		y=284
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumExposures_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=313
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Dwell Time"
+}
+"text entry" {
+	object {
+		x=566
+		y=312
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquireTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=674
+		y=312
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquireTime_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=563
+		y=105
+		width=200
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ETA_STR"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=405
+		y=105
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Time estimated:"
+}
+"text entry" {
+	object {
+		x=574
+		y=538
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CENTRE_SLICE"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=574
+		y=518
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CENTRE_SLICE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=496
+		y=445
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Low"
+}
+text {
+	object {
+		x=730
+		y=445
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Step"
+}
+text {
+	object {
+		x=652
+		y=445
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="High"
+}
+text {
+	object {
+		x=574
+		y=445
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Center"
+}
+text {
+	object {
+		x=409
+		y=580
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Theta Y"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=407
+		y=529
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Theta X"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=386
+		y=65
+		width=575
+		height=558
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+text {
+	object {
+		x=407
+		y=479
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Energy"
+	align="horiz. centered"
+}
+rectangle {
+	object {
+		x=132
+		y=388
+		width=117
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=111
+		y=389
+		width=159
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Detector"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=51
+		y=451
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Sensor size"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=172
+		y=452
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MaxSizeX_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=452
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MaxSizeY_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+text {
+	object {
+		x=41
+		y=500
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Region start"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=172
+		y=500
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MinX"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=172
+		y=480
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MinX_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=265
+		y=500
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)MinY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=480
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)MinY_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=172
+		y=525
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SizeX_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+text {
+	object {
+		x=51
+		y=545
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Region size"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=172
+		y=545
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SizeX"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=265
+		y=545
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SizeY"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=525
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SizeY_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+text {
+	object {
+		x=192
+		y=423
+		width=10
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="X"
+	align="horiz. right"
+}
+text {
+	object {
+		x=285
+		y=423
+		width=10
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Y"
+	align="horiz. right"
+}
+text {
+	object {
+		x=51
+		y=594
+		width=110
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Slices"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=172
+		y=594
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)CHANNELS"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=172
+		y=574
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)CHANNELS_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+"text entry" {
+	object {
+		x=265
+		y=594
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)SLICES"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=265
+		y=574
+		width=61
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SLICES_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	limits {
+	}
+}
+rectangle {
+	object {
+		x=980
+		y=125
+		width=350
+		height=418
+	}
+	"basic attribute" {
+		clr=14
+		fill="outline"
+	}
+}
+"text entry" {
+	object {
+		x=1164
+		y=157
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)AcquireTime"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=1229
+		y=158
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)AcquireTime_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=1029
+		y=157
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Exposure time"
+	align="horiz. right"
+}
+text {
+	object {
+		x=1079
+		y=185
+		width=80
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Images"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=1164
+		y=185
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumImages"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=1229
+		y=186
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumImages_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=989
+		y=210
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Images complete"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1229
+		y=211
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumImagesCounter_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=1039
+		y=235
+		width=120
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Exp./image"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=1164
+		y=235
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)NumExposures"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=1229
+		y=236
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumExposures_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=1009
+		y=335
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Image mode"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=1114
+		y=335
+		width=120
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ImageMode"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=1239
+		y=337
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ImageMode_RBV"
+		clr=54
+		bclr=4
+	}
+	format="string"
+	limits {
+	}
+}
+rectangle {
+	object {
+		x=1108
+		y=127
+		width=105
+		height=21
+	}
+	"basic attribute" {
+		clr=2
+	}
+}
+text {
+	object {
+		x=1125
+		y=128
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=54
+	}
+	textix="Collect"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=989
+		y=260
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Exp. complete"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1229
+		y=261
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)NumExposuresCounter_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=1202
+		y=372
+		width=40
+		height=20
+	}
+	"basic attribute" {
+		clr=63
+	}
+	"dynamic attribute" {
+		vis="if zero"
+		calc="A"
+		chan="$(P)$(R)Acquire"
+	}
+	textix="Done"
+	align="horiz. centered"
+}
+text {
+	object {
+		x=1173
+		y=372
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=30
+	}
+	"dynamic attribute" {
+		vis="if not zero"
+		calc="A"
+		chan="$(P)$(R)Acquire"
+	}
+	textix="Collecting"
+	align="horiz. centered"
+}
+"message button" {
+	object {
+		x=1159
+		y=392
+		width=59
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Acquire"
+		clr=14
+		bclr=51
+	}
+	label="Start"
+	press_msg="1"
+}
+"message button" {
+	object {
+		x=1226
+		y=392
+		width=59
+		height=20
+	}
+	control {
+		chan="$(P)$(R)Acquire"
+		clr=14
+		bclr=51
+	}
+	label="Stop"
+	press_msg="0"
+}
+text {
+	object {
+		x=1084
+		y=392
+		width=70
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Acquire"
+	align="horiz. right"
+}
+text {
+	object {
+		x=1014
+		y=417
+		width=140
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Detector state"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1159
+		y=417
+		width=158
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)DetectorState_RBV"
+		clr=54
+		bclr=2
+	}
+	clrmod="alarm"
+	limits {
+	}
+}
+text {
+	object {
+		x=984
+		y=442
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Status"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1049
+		y=442
+		width=275
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)StatusMessage_RBV"
+		clr=54
+		bclr=2
+	}
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=1029
+		y=467
+		width=130
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Image counter"
+	align="horiz. right"
+}
+"text entry" {
+	object {
+		x=1164
+		y=467
+		width=60
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCounter"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=1229
+		y=468
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCounter_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=1059
+		y=493
+		width=100
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Image rate"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1164
+		y=494
+		width=100
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayRate_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=989
+		y=518
+		width=150
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Array callbacks"
+	align="horiz. right"
+}
+menu {
+	object {
+		x=1144
+		y=518
+		width=90
+		height=20
+	}
+	control {
+		chan="$(P)$(R)ArrayCallbacks"
+		clr=14
+		bclr=51
+	}
+}
+"text update" {
+	object {
+		x=1239
+		y=520
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)ArrayCallbacks_RBV"
+		clr=54
+		bclr=4
+	}
+	align="horiz. centered"
+	format="string"
+	limits {
+	}
+}
+text {
+	object {
+		x=989
+		y=310
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Steps. complete"
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1229
+		y=310
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)STEPS_COUNTER_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=987
+		y=285
+		width=170
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="# Steps/exp."
+	align="horiz. right"
+}
+"text update" {
+	object {
+		x=1229
+		y=285
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)STEPS_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=496
+		y=518
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)LOW_SLICE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=652
+		y=518
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)HIGH_SLICE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=730
+		y=518
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SLICE_STEP_SIZE_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=808
+		y=518
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SLICE_WIDTH_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=880
+		y=445
+		width=60
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Count"
+}
+"text update" {
+	object {
+		x=880
+		y=469
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)COUNT_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=880
+		y=518
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)SLICE_COUNT_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=880
+		y=573
+		width=60
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)THETA_Y_COUNT_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
