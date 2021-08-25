@@ -12,7 +12,6 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 
 DB += peakAnalyser.template
-DB += peakAnalyser_settings.req
 
 #----------------------------------------------------
 # If <anyname>.db template is not named <anyname>*.template add
