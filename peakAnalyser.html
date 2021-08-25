@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>peakAnalyser &#8212; peakAnalyser 2293d14 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+          peakAnalyser</a>
+        <span class="navbar-text navbar-version pull-left"><b>2293d14</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"></ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">peakAnalyser</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#implementation-of-standard-driver-parameters">Implementation of standard driver parameters</a></li>
+<li><a class="reference internal" href="#peakanalyser-specific-parameters">peakAnalyser specific parameters</a><ul>
+<li><a class="reference internal" href="#acquisition-information">Acquisition information</a></li>
+<li><a class="reference internal" href="#analyser-modes-settings">Analyser modes settings</a></li>
+<li><a class="reference internal" href="#spectrum-region-definition">Spectrum region definition</a></li>
+<li><a class="reference internal" href="#electronics-control">Electronics control</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+<li><a class="reference internal" href="#medm-screen">MEDM screen</a></li>
+<li><a class="reference internal" href="#known-problems">Known problems</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/peakAnalyser.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="body col-md-12 content" role="main">
+      
+  <section id="peakanalyser">
+<h1><a class="toc-backref" href="#id1">peakAnalyser</a><a class="headerlink" href="#peakanalyser" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>Xiaoqiang Wang</p>
+</dd>
+</dl>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#peakanalyser" id="id1">peakAnalyser</a></p>
+<ul>
+<li><p><a class="reference internal" href="#introduction" id="id2">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#implementation-of-standard-driver-parameters" id="id3">Implementation of standard driver parameters</a></p></li>
+<li><p><a class="reference internal" href="#peakanalyser-specific-parameters" id="id4">peakAnalyser specific parameters</a></p>
+<ul>
+<li><p><a class="reference internal" href="#acquisition-information" id="id5">Acquisition information</a></p></li>
+<li><p><a class="reference internal" href="#analyser-modes-settings" id="id6">Analyser modes settings</a></p></li>
+<li><p><a class="reference internal" href="#spectrum-region-definition" id="id7">Spectrum region definition</a></p></li>
+<li><p><a class="reference internal" href="#electronics-control" id="id8">Electronics control</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#configuration" id="id9">Configuration</a></p></li>
+<li><p><a class="reference internal" href="#medm-screen" id="id10">MEDM screen</a></p></li>
+<li><p><a class="reference internal" href="#known-problems" id="id11">Known problems</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="introduction">
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This is an <a class="reference external" href="https://epics-controls.org">EPICS</a> <a class="reference external" href="https://areadetector.github.io/master/index.html">areaDetector</a> driver for <a class="reference external" href="https://scientaomicron.com">Scienta Omicron</a> analysers using the <a class="reference external" href="https://scientaomicron.com/en/Components/Electron-Analysers/PEAK">PEAK</a> API.
+It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.</p>
+<p>The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver implements PEAK client
+using HTTP for the following considerations:</p>
+<ul class="simple">
+<li><p>HTTP client is (relatively) easy to implment using libCom OSI socket.
+ADEiger driver <a class="reference external" href="https://github.com/areaDetector/ADEiger/tree/master/eigerApp/src">restApi</a> provides a solid code example.</p></li>
+<li><p>WebSocket programming in C++ requires extra libraries. As this driver is aimed to support both
+Windows and Linux, this costs extra efforts to integrate these libraries either in source or in
+binary formats.</p></li>
+<li><p>The combination of <a class="reference external" href="https://github.com/zaphoyd/websocketpp">websocketpp</a> and (standalone) <a class="reference external" href="https://github.com/chriskohlhoff/asio">asio</a> is promising. However the learning curve
+of asynchronous pattern and how to adapt it to synchronous usage is steep.</p></li>
+</ul>
+</section>
+<section id="implementation-of-standard-driver-parameters">
+<h2><a class="toc-backref" href="#id3">Implementation of standard driver parameters</a><a class="headerlink" href="#implementation-of-standard-driver-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The following table describes how the driver implements some of
+the standard driver parameters defined in <a class="reference external" href="https://areadetector.github.io/master/ADCore/ADDriver.html">ADDriver</a>.</p>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 10%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record name</p></th>
+<th class="head"><p>EPICS record type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>$(P)$(R)AcquireTime, $(P)$(R)AcquireTime_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>Analyser dwell time.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)NumImages, $(P)$(R)NumImages_RBV</p></td>
+<td><p>longout, longin</p></td>
+<td><p>Number of spectra to acquire in <em>Multiple</em> image mode.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)NumExposures, $(P)$(R)NumExposures_RBV</p></td>
+<td><p>longout, longin</p></td>
+<td><p>Number of iterations to accumulate for each spectrum.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)MaxSizeX_RBV</p></td>
+<td><p>longin</p></td>
+<td><p>Camera channel area size in X direction.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)MaxSizeY_RBV</p></td>
+<td><p>longin</p></td>
+<td><p>Camera channel area size in Y direction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)MinX, $(P)$(R)MinX_RBV</p></td>
+<td rowspan="2"><p> longout, longin</p></td>
+<td rowspan="2"><p> Camera ROI in X direction, initialised with camera spatial calibration values.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)SizeX, $(P)$(R)SizeX_RBV</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)MinY, $(P)$(R)MinX_RBV</p></td>
+<td rowspan="2"><p> longout, longin</p></td>
+<td rowspan="2"><p> Camera ROI in Y direction, initialised with camera spatial calibration values.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)SizeY, $(P)$(R)SizeX_RBV</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)Manufacturer_RBV</p></td>
+<td><p>stringin</p></td>
+<td><p>“Scienta Omicron”</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)Model_RBV</p></td>
+<td><p>stringin</p></td>
+<td><p>Analyser model name</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)SerialNumber_RBV</p></td>
+<td><p>stringin</p></td>
+<td><p>Analyser serial number</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)SDKVersion_RBV</p></td>
+<td><p>stringin</p></td>
+<td><p>PEAK software release version</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)FirmwareVersion_RBV</p></td>
+<td><p>stringin</p></td>
+<td><p>PEAK server version</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="peakanalyser-specific-parameters">
+<h2><a class="toc-backref" href="#id4">peakAnalyser specific parameters</a><a class="headerlink" href="#peakanalyser-specific-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The peakAnalyser driver implements the following parameters in addition
+to those in <a class="reference external" href="https://areadetector.github.io/master/ADCore/ADDriver.html">ADDriver</a>. The records are in peakAnalyser.template.</p>
+<section id="acquisition-information">
+<h3><a class="toc-backref" href="#id5">Acquisition information</a><a class="headerlink" href="#acquisition-information" title="Permalink to this headline">¶</a></h3>
+<p>These are estimated by the server about the current configured acquisition.
+<em>$(P)$(R)STEPS_RBV</em> might be updated again once the first step is acquired,
+which reflects the actual value.</p>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 10%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record name</p></th>
+<th class="head"><p>EPICS record type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>$(P)$(R)ETA</p></td>
+<td><p>ai</p></td>
+<td><p>Estimated time of acquisiton in seconds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)ETA_STR</p></td>
+<td><p>stringin</p></td>
+<td><p>ETA in hh:mm:ss format.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)STEPS_RBV</p></td>
+<td><p>longin</p></td>
+<td><p>Number of steps that analyser acquires per iteration.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)STEPS_COUNTER_RBV</p></td>
+<td><p>longin</p></td>
+<td><p>Number of steps that analyser has acquired for the current iteration.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="analyser-modes-settings">
+<h3><a class="toc-backref" href="#id6">Analyser modes settings</a><a class="headerlink" href="#analyser-modes-settings" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These settings configure the next acquistion and
+do not immediately change the current analyser.</p>
+</div>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 10%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record name</p></th>
+<th class="head"><p>EPICS record type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>$(P)$(R)ACQ_MODE, $(P)$(R)ACQ_MODE_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><dl class="simple">
+<dt>Specify how analyser changes kinetic energy and theta Y</dt><dd><ul class="simple">
+<li><p>Fixed</p></li>
+<li><p>Sweep Energy</p></li>
+<li><p>Sweep ThetaY</p></li>
+<li><p>Sweep Energy &amp; ThetaY</p></li>
+</ul>
+</dd>
+</dl>
+<p>Theta Y sweeping is only possible if the lens mode supports.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)ENERGY_MODE, $(P)$(R)ENERGY_MODE_RBV</p></td>
+<td><p>bo, bi</p></td>
+<td><dl class="simple">
+<dt>Format of the energy input</dt><dd><ul class="simple">
+<li><p>Kinetic</p></li>
+<li><p>Binding</p></li>
+</ul>
+</dd>
+</dl>
+<p>In case of <em>Binding</em>, $(P)$(R)EXCITATION_ENERGY must be valid.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)EXCITATION_ENERGY, $(P)$(R)EXCITATION_ENERGY_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>Photon energy, used to calculate kinetic energy from
+binding energy input. i.e. <code class="docutils literal notranslate"><span class="pre">kinetic</span> <span class="pre">=</span> <span class="pre">excitation</span> <span class="pre">-</span> <span class="pre">binding</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)ELEMENT_SET_RBV</p></td>
+<td><p>mbbi</p></td>
+<td><p>Current analyser element set name.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)LENS_MODE, $(P)$(R)LENS_MODE_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><p>Specify the analyser lens mode to be used in the acquisition.
+The list of lens modes are initialised from the current analyser configuration.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)DETECTOR_MODE, $(P)$(R)DETECTOR_MODE_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><dl class="simple">
+<dt>Specify the detector counting mode to be used in the acquisition.</dt><dd><ul class="simple">
+<li><p>ADC - Use camera counts</p></li>
+<li><p>Pulse - Detect electron events</p></li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)PASS_ENERGY, $(P)$(R)PASS_ENERGY_RBV</p></td>
+<td><p>mbbo, mbbi</p></td>
+<td><p>Specify the pass energy to be used in the acquisition.
+The choice of pass energies are initialised from the current analyser configuration.
+And it can still be further limited in some lens modes.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)CHANNELS, $(P)$(R)CHANNELS_RBV</p></td>
+<td><p>longout, longin</p></td>
+<td><p>Specify the desired number of channels in X direction.
+This will not excceed the current camera width $(P)$(R)SizeX.</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)SLICES, $(P)$(R)SLICES_RBV</p></td>
+<td><p>longout, longin</p></td>
+<td><p>Specify the desired number of channels in Y direction.
+This will not excceed the current camera height $(P)$(R)SizeY.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="spectrum-region-definition">
+<h3><a class="toc-backref" href="#id7">Spectrum region definition</a><a class="headerlink" href="#spectrum-region-definition" title="Permalink to this headline">¶</a></h3>
+<p>For axis in sweeping mode, a low and a high value define the range,
+and then a step value defines the number of points</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">count</span> <span class="o">=</span> <span class="n">ceil</span><span class="p">((</span><span class="n">high</span><span class="o">-</span><span class="n">low</span><span class="o">-</span><span class="n">epsilon</span><span class="p">)</span><span class="o">/</span><span class="n">step</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Once an input value is specified, the driver calls the to server to
+validate the range and updates readback values, which might differ from the inputs.
+And after the first step is acquired, the readback values are
+updated again to reflect the actual measured values.</p>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 10%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record name</p></th>
+<th class="head"><p>EPICS record type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>$(P)$(R)LOW_ENERGY, $(R)$(R)LOW_ENERGY_RBV</p></td>
+<td rowspan="4"><p> ao, ai</p></td>
+<td rowspan="4"><p> Specify the list of energies to acquire.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)HIGH_ENERGY, $(R)$(R)HIGH_ENERGY_RBV</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)STEP_ENERGY, $(R)$(R)STEP_ENERGY_RBV</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)CENTER_ENERGY, $(R)$(R)CENTER_ENERGY_RBV</p></td>
+</tr>
+<tr class="row-even"><td><p>$(R)$(R)LOW_SLICE_RBV</p></td>
+<td rowspan="4"><p> ao, ai</p></td>
+<td rowspan="4"><p> Analyser theta X range. All values are readback only,
+except that the center value can be specified in certain lens mode.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(R)$(R)HIGH_SLICE_RBV</p></td>
+</tr>
+<tr class="row-even"><td><p>$(R)$(R)STEP_SLICE_RBV</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)CENTER_SLICE, $(R)$(R)CENTER_SLICE_RBV</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)LOW_THETA_Y, $(R)$(R)LOW_THETA_Y_RBV</p></td>
+<td rowspan="4"><p> ao, ai</p></td>
+<td rowspan="4"><p> Specify the list of theta Y angels to acquire.
+These values are used only for lens modes that support Theta Y.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)HIGH_THETA_Y, $(R)$(R)HIGH_THETA_Y_RBV</p></td>
+</tr>
+<tr class="row-even"><td><p>$(P)$(R)STEP_THETA_Y, $(R)$(R)STEP_THETA_Y_RBV</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)CENTER_THETA_Y, $(R)$(R)CENTER_THETA_Y_RBV</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="electronics-control">
+<h3><a class="toc-backref" href="#id8">Electronics control</a><a class="headerlink" href="#electronics-control" title="Permalink to this headline">¶</a></h3>
+<table class="table-bordered table-striped table-hover docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 10%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>EPICS record name</p></th>
+<th class="head"><p>EPICS record type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>$(P)$(R)ZERO_SUPPLIES</p></td>
+<td><p>longout</p></td>
+<td><p>Zero all electronics power supplies.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="configuration">
+<h2><a class="toc-backref" href="#id9">Configuration</a><a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>The peakAnalyser driver is created with peakAnalyserConfig command,
+either from C/C++ or from the EPICS IOC shell:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">int</span> <span class="n">peakAnalyserConfig</span><span class="p">(</span><span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">portName</span><span class="p">,</span>
+                       <span class="n">const</span> <span class="n">char</span> <span class="o">*</span><span class="n">hostAddress</span><span class="p">,</span>
+                       <span class="nb">int</span> <span class="n">localPort</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>portName: asym port name this driver creates</p></li>
+<li><p>hostAddress: PEAK manager server address, e.g. <a class="reference external" href="http://127.0.0.1:8080">http://127.0.0.1:8080</a></p></li>
+<li><p>localPort: port number that this driver binds and listens at, to receive notifications.</p></li>
+</ul>
+</section>
+<section id="medm-screen">
+<h2><a class="toc-backref" href="#id10">MEDM screen</a><a class="headerlink" href="#medm-screen" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/peakAnalyser.png" src="_images/peakAnalyser.png" />
+</section>
+<section id="known-problems">
+<h2><a class="toc-backref" href="#id11">Known problems</a><a class="headerlink" href="#known-problems" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
+only when <em>unsubsribe</em> is called with the subscription id. This would create repetitive subscriptions
+if the client exits abnormally, either killed forcefully or crashed. To remove such orphan subscriptions,
+PEAK servers need to a reset. WebSocket client does not suffer this problem however.</p></li>
+</ul>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Xiaoqiang Wang.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
