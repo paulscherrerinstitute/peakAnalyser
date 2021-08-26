@@ -12,6 +12,12 @@
 #include <string.h>
 #include <fcntl.h>
 
+#ifdef _WIN32
+ // Required for EPICS base 3.14.
+ // In EPICS base >= 3.15, WIN32/osdSock.h includes this header.
+#include <ws2tcpip.h>
+#endif
+
 #include <epicsThread.h>
 
 using namespace nlohmann;
