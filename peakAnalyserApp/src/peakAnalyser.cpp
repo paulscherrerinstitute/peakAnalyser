@@ -271,9 +271,8 @@ static void peakAnalyserTaskC(void *drvPvt)
     pPvt->peakAnalyserTask();
 }
 
-/** Task to grab image off the Frame Grabber and send them up to areaDetector.
+/** Task to acquire spectrum from analyser and send them up to areaDetector.
  *
- *  This function runs the polling thread.
  *  It is started in the class constructor and must not return until the IOC stops.
  *
  */
@@ -660,8 +659,8 @@ asynStatus peakAnalyser::readEnum(asynUser *pasynUser,
 
 /** Called when asyn clients call pasynInt32->write().
  * Write integer value to the drivers parameter table.
- * \param pasynUser
- * \param value
+ * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+ * \param[in] value The value for this parameter
  * \return asynStatus Either asynError or asynSuccess
  */
 asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
@@ -852,8 +851,8 @@ asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
 }
 
 /** Write double value to the drivers parameter table.
- * \param pasynUser
- * \param value
+ * \param[in] pasynUser pasynUser structure that encodes the reason and address.
+ * \param[in] value The value for this parameter
  * \return asynStatus Either asynError or asynSuccess
  */
 asynStatus peakAnalyser::writeFloat64(asynUser *pasynUser,
