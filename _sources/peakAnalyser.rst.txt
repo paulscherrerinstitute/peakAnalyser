@@ -96,9 +96,9 @@ to those in `ADDriver`_. The records are in peakAnalyser.template.
 Acquisition information
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-These are estimated by the server about the current configured acquisition.
-*$(P)$(R)STEPS_RBV* might be updated again once the first step is acquired,
-which reflects the actual value.
+These values are estimated by the server about the current configured acquisition.
+Once the first step is acquired, *$(P)$(R)STEPS_RBV* might be updated again
+with the actual value.
 
 .. cssclass:: table-bordered table-striped table-hover
 .. flat-table::
@@ -266,4 +266,4 @@ Known problems
 * PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
   only when *unsubsribe* is called with the subscription id. This would create repetitive subscriptions
   if the client exits abnormally, either killed forcefully or crashed. To remove such orphan subscriptions,
-  PEAK servers need to a reset. WebSocket client does not suffer this problem however.
+  PEAK server needs a reset. WebSocket client does not suffer this problem however.

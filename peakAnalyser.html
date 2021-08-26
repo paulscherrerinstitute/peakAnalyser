@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>peakAnalyser &#8212; peakAnalyser 2293d14 documentation</title>
+    <title>peakAnalyser &#8212; peakAnalyser 52e4650 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -36,7 +36,7 @@
         </button>
         <a class="navbar-brand" href="#">
           peakAnalyser</a>
-        <span class="navbar-text navbar-version pull-left"><b>2293d14</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>52e4650</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -240,9 +240,9 @@ the standard driver parameters defined in <a class="reference external" href="ht
 to those in <a class="reference external" href="https://areadetector.github.io/master/ADCore/ADDriver.html">ADDriver</a>. The records are in peakAnalyser.template.</p>
 <section id="acquisition-information">
 <h3><a class="toc-backref" href="#id5">Acquisition information</a><a class="headerlink" href="#acquisition-information" title="Permalink to this headline">¶</a></h3>
-<p>These are estimated by the server about the current configured acquisition.
-<em>$(P)$(R)STEPS_RBV</em> might be updated again once the first step is acquired,
-which reflects the actual value.</p>
+<p>These values are estimated by the server about the current configured acquisition.
+Once the first step is acquired, <em>$(P)$(R)STEPS_RBV</em> might be updated again
+with the actual value.</p>
 <table class="table-bordered table-striped table-hover docutils align-default">
 <colgroup>
 <col style="width: 20%" />
@@ -472,7 +472,7 @@ either from C/C++ or from the EPICS IOC shell:</p>
 <li><p>PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
 only when <em>unsubsribe</em> is called with the subscription id. This would create repetitive subscriptions
 if the client exits abnormally, either killed forcefully or crashed. To remove such orphan subscriptions,
-PEAK servers need to a reset. WebSocket client does not suffer this problem however.</p></li>
+PEAK server needs a reset. WebSocket client does not suffer this problem however.</p></li>
 </ul>
 </section>
 </section>
