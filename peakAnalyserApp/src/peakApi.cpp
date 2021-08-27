@@ -1019,6 +1019,11 @@ json PeakAnalyserClient::currentSettings ()
     return query("AnalyserSettings");
 }
 
+json PeakAnalyserClient::adjustSpectrumDefinition (const nlohmann::json& spectrumDefinition)
+{
+    return call("AdjustSpectrumDefinition", spectrumDefinition);
+}
+
 json PeakAnalyserClient::calculateSpectrumInfo (const nlohmann::json& spectrumDefinition)
 {
     return call("CalculateSpectrumInfo", spectrumDefinition);

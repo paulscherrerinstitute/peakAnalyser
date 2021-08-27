@@ -203,6 +203,8 @@ public:
     void finishSpectrum (const std::string& spectrumId);
     //! zero a spectrum's array data
     void clearSpectrum (const std::string& spectrumId);
+    //! validate spectrum axes range info
+    nlohmann::json adjustSpectrumDefinition(const nlohmann::json& spectrumDefinition);
     //! calculate spectrum axes range info
     nlohmann::json calculateSpectrumInfo(const nlohmann::json& spectrumDefinition);
 
