@@ -1,33 +1,8 @@
 #ifndef PEAK_API_H
 #define PEAK_API_H
 
-#include <string>
-#include <atomic>
-#include <thread>
-
-#include <json.hpp>     // JSON parser
-#include <osiSock.h>    // EPICS os independent socket
-
-
-// Forward declarations
-typedef struct request  request_t;
-typedef struct response response_t;
-typedef struct socket   socket_t;
-
-using Callback = std::function<void(const nlohmann::json&)>;
-
-void base64_decode(const std::string&, unsigned char *, size_t);
-
-/*!
- * Simple parser of url of form http://<host>[:<port>][/path]
- */
-struct URL
-{
-    URL(const std::string& url);
-    std::string host;
-    int port;
-    std::string path;
-};
+#include "JsonRPCClientI.h"
+#include "json.hpp"
 
 /*!
  * Spectrum data
@@ -46,37 +21,7 @@ struct PeakSpectrum
 };
 
 /*!
- * HTTP server to receive notifications from PEAK servers.
- */
-class PeakNotificationServer
-{
-public:
-    PeakNotificationServer(const std::string& host="127.0.0.1", int port=0);
-    ~PeakNotificationServer();
-
-
-    void subscribe (const std::string& topic, Callback callback);
-    void unsubscribe (const std::string& topic);
-
-    void stop () {_stop = true;};
-
-    std::string host() { return _host; }
-    int port() { return _port; }
-
-private:
-    void createSocket();
-    void connectionListener();
-    void clientHandler(SOCKET client);
-
-    std::unique_ptr<std::thread> _server;
-    std::string _host;
-    int _port;
-    SOCKET _socket;
-    std::map<std::string, Callback> _subscribers;
-    bool _stop;
-};
-/*!
- * Generic access API of PEAK servers via JSON-RPC over HTTP.
+ * Generic access API of PEAK servers via JSON-RPC.
  */
 class PeakAPI
 {
@@ -88,35 +33,25 @@ public:
         File
     };
 
-    PeakAPI (const std::string& hostname, int port, size_t numSockets=5);
-    virtual ~PeakAPI();
-
-    //! reply timeout in second
-    void setTimeout(int timeout) {mTimeout = timeout;}
-    int timeout() {return mTimeout;}
+    PeakAPI (const std::string& uri);
+    virtual ~PeakAPI() {};
 
     //! attachment mode used in relavent methods
     void setAttachmentMode(AttachmentMode mode) {mAttachmentMode = mode;}
     AttachmentMode attachmentMode() {return mAttachmentMode;}
 
-    //! server host name
-    std::string host() {return mHostname;}
-
-    //! server port number
-    int port() {return mPort;}
-
-    //! client host name, filled after the first connection
-    std::string localHost();
-
     //! make a JSON-RPC call
     template<typename... Args>
-    nlohmann::json call(const std::string& method, const Args... args);
+    nlohmann::json call(const std::string& method, const Args... args) {
+        nlohmann::json params = nlohmann::json::array({args...});
+        return m_rpcClient->call(method, params);
+    }
 
     //! query a property of the PEAK server
     nlohmann::json query (const std::string& property, const nlohmann::json& filter = nlohmann::json::object());
 
     //! subscribe to a notification of the PEAK server
-    std::string subscribe(const std::string& notification, Callback callback, AttachmentMode attachmentMode=Inline);
+    std::string subscribe(const std::string& notification, JsonRPCClientI::Callback callback, AttachmentMode attachmentMode=Inline);
     //! unsubscribe previousely subscribed notification
     void unsubscribe(const std::string& guid);
 
@@ -130,35 +65,13 @@ public:
     //! available configurations of the PEAK server
     std::vector<std::string> configurations();
 
-    static std::unique_ptr<PeakNotificationServer> notificationServer;
-
 protected:
-    //! issue HTTP GET requests
-    bool get (const std::string& path, std::string& value);
-    //! issue HTTP POST requests
-    bool post (const std::string& path, const std::string& content, std::string& value);
-    //! issue an HTTP request and get server's response
-    bool doRequest (const request_t& request, response_t& response);
-    //! create the socket connection
-    bool connect (socket_t *s);
-    //! close the socket connection
-    void close (socket_t *s);
-    //! enable/disable socket nonblock option
-    bool setNonBlock (socket_t *s, bool nonBlock);
-
     //! convert enum AttachmentMode to string
     std::string attachmentModeToString(AttachmentMode attachmentMode);
 
-private:
-    std::string mHostname;
-    int mPort;
-    struct sockaddr_in mServerAddress;
-    std::string mLocalHost;
-    size_t mNumSockets;
-    socket_t *mSockets;
-    std::atomic<uint32_t> mMsgId;
-    int mTimeout;
     AttachmentMode mAttachmentMode;
+    std::unique_ptr<JsonRPCClientI> m_rpcClient;
+    std::map<std::string, std::string> m_subscribers;
 };
 
 /*! Client to access PEAK manager server
@@ -166,8 +79,8 @@ private:
 class PeakManagerClient : public PeakAPI
 {
 public:
-    PeakManagerClient (std::string const & hostname, int port=8080, size_t numSockets=5)
-        : PeakAPI(hostname, port, numSockets) {}
+    PeakManagerClient (const std::string& uri)
+        : PeakAPI(uri) {}
     virtual ~PeakManagerClient () {}
 
     //! current running servers' names and addresses
@@ -179,8 +92,8 @@ public:
 class PeakAnalyserClient : public PeakAPI
 {
 public:
-    PeakAnalyserClient (std::string const & hostname, int port, size_t numSockets=5)
-        : PeakAPI(hostname, port, numSockets) {}
+    PeakAnalyserClient (const std::string& uri)
+        : PeakAPI(uri) {}
     virtual ~PeakAnalyserClient () {}
 
     //! current analyser settings
@@ -230,8 +143,8 @@ public:
 class PeakElectronicsClient : public PeakAPI
 {
 public:
-    PeakElectronicsClient (const std::string& hostname, int port, size_t numSockets=5)
-        : PeakAPI(hostname, port, numSockets) {}
+    PeakElectronicsClient (const std::string& uri)
+        : PeakAPI(uri) {}
     virtual ~PeakElectronicsClient () {}
 
     //! zero power supplies
@@ -244,8 +157,8 @@ public:
 class PeakCameraClient : public PeakAPI
 {
 public:
-    PeakCameraClient (const std::string& hostname, int port, size_t numSockets=5)
-        : PeakAPI(hostname, port, numSockets) {}
+    PeakCameraClient (const std::string& uri)
+        : PeakAPI(uri) {}
     virtual ~PeakCameraClient () {}
 
     //! detector calibrated geometry

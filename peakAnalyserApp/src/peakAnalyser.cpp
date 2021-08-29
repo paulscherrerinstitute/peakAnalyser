@@ -78,7 +78,7 @@ typedef struct {
 class peakAnalyser : public ADDriver
 {
 public:
-    peakAnalyser(const char *portName, const char *hostAddress, int localPort, int maxBuffers, size_t maxMemory, int priority, int stackSize);
+    peakAnalyser(const char *portName, const char *hostAddress, int maxBuffers, size_t maxMemory, int priority, int stackSize);
     virtual ~peakAnalyser();
     virtual asynStatus readEnum(asynUser *pasynUser, char *strings[], int values[], int severities[], size_t nElements, size_t *nIn);
     virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
@@ -149,7 +149,6 @@ private:
     std::unique_ptr<PeakAnalyserClient> analyser;
     std::unique_ptr<PeakElectronicsClient> electronics;
     std::string m_ManagerHost;
-    int m_NotificationServerPort;
     json m_SpectrumDefinition;
     /* Analyser specific parameters */
     std::vector<std::string> m_Elementsets;
@@ -170,11 +169,11 @@ peakAnalyser::~peakAnalyser()
 }
 
 /* peakAnalyser constructor */
-peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int localPort, int maxBuffers, size_t maxMemory, int priority, int stackSize)
+peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int maxBuffers, size_t maxMemory, int priority, int stackSize)
     : ADDriver(portName, 1, (int)NUM_PEAKANALYSER_PARAMS, maxBuffers, maxMemory,
                asynEnumMask | asynFloat64ArrayMask, asynEnumMask | asynFloat64ArrayMask,
                ASYN_CANBLOCK, 1,   /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0, autoConnect=1 */
-               priority, stackSize), m_ManagerHost(hostAddress), m_NotificationServerPort(localPort)
+               priority, stackSize), m_ManagerHost(hostAddress)
 {
     int status = asynSuccess;
     const char *functionName = "peakAnalyser";
@@ -997,16 +996,6 @@ void peakAnalyser::report(FILE *fp, int details)
         getIntegerParam(ADSizeX, &nx);
         getIntegerParam(ADSizeY, &ny);
         getIntegerParam(NDDataType, &dataType);
-        std::string analyserAddress = "N/A";
-        std::string notificationServerAddress = "N/A";
-        if (analyser) {
-            analyserAddress = analyser->host() + ":" + std::to_string(analyser->port());
-            if (analyser->notificationServer)
-                 notificationServerAddress = analyser->notificationServer->host() + ":" +
-                    std::to_string(analyser->notificationServer->port());
-        }
-        fprintf(fp, "  Analyser:            %s\n", analyserAddress.c_str());
-        fprintf(fp, "  Notification Server: %s\n", notificationServerAddress.c_str());
         fprintf(fp, "  NX, NY:              %d  %d\n", nx, ny);
         fprintf(fp, "  Data type:           %d\n", dataType);
     }
@@ -1023,22 +1012,13 @@ void peakAnalyser::connectAnalyser()
     const char *functionName = "connectAnalyser";
 
     /* Connect Manager server */
-    URL urlManager(m_ManagerHost);
-    PeakManagerClient manager(urlManager.host, urlManager.port);
+    PeakManagerClient manager(m_ManagerHost);
     json serverInfo = manager.query("ServerInfo", json({
         {"Version", json::object()},
         {"ReleaseVersion", json::object()}
     }));
     setStringParam(ADSDKVersion, serverInfo["ReleaseVersion"].get<std::string>());
     setStringParam(ADFirmwareVersion, serverInfo["Version"].get<std::string>());
-
-    /* Launch local Notification Server */
-    if (!manager.notificationServer)
-        manager.notificationServer.reset(
-            new PeakNotificationServer(
-                manager.localHost(),
-                m_NotificationServerPort)
-        );
 
     /* Get Analyser and Electronics servers address and connect */
     json servers = manager.runningServers();
@@ -1062,15 +1042,13 @@ void peakAnalyser::connectAnalyser()
             "%s:%s: Connect electronics at %s\n",
             driverName, functionName, electronicsAddress.c_str());
 
-    URL urlElectronics(electronicsAddress);
-    electronics.reset(new PeakElectronicsClient(urlElectronics.host, urlElectronics.port));
+    electronics.reset(new PeakElectronicsClient(electronicsAddress));
 
     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
             "%s:%s: Connect analyser at %s\n",
             driverName, functionName, analyserAddress.c_str());
 
-    URL urlAnalyser(analyserAddress);
-    analyser.reset(new PeakAnalyserClient(urlAnalyser.host, urlAnalyser.port));
+    analyser.reset(new PeakAnalyserClient(analyserAddress));
 
     /* Get Analyser available configurations (element sets) */
     m_Elementsets = analyser->configurations();
@@ -1171,8 +1149,7 @@ void peakAnalyser::connectAnalyser()
     }
 
     /* Retrieve calibrated ROI setting from Camera server */
-    URL urlCamera(cameraAddress);
-    PeakCameraClient camera(urlCamera.host, urlCamera.port);
+    PeakCameraClient camera(cameraAddress);
     json calibration = camera.geometry();
 
     int minX = calibration["RoiOffsetX"].get<int>();
@@ -1497,10 +1474,10 @@ void peakAnalyser::setupSpectrumDefinition()
 
 /** Configuration command, called directly or from iocsh */
 extern "C" int peakAnalyserConfig(const char *portName,
-                                 const char *hostAddress, int localPort,
+                                 const char *hostAddress,
                                  int maxBuffers, int maxMemory, int priority, int stackSize)
 {
-    new peakAnalyser(portName, hostAddress, localPort,
+    new peakAnalyser(portName, hostAddress,
                     (maxBuffers < 0) ? 0 : maxBuffers,
                     (maxMemory < 0) ? 0 : maxMemory,
                     priority, stackSize);
@@ -1510,23 +1487,21 @@ extern "C" int peakAnalyserConfig(const char *portName,
 /** Code for iocsh registration */
 static const iocshArg peakAnalyserConfigArg0 = {"Port name", iocshArgString};
 static const iocshArg peakAnalyserConfigArg1 = {"Peak Analyser server address", iocshArgString};
-static const iocshArg peakAnalyserConfigArg2 = {"Local notififcation server port", iocshArgInt};
-static const iocshArg peakAnalyserConfigArg3 = {"maxBuffers", iocshArgInt};
-static const iocshArg peakAnalyserConfigArg4 = {"maxMemory", iocshArgInt};
-static const iocshArg peakAnalyserConfigArg5 = {"priority", iocshArgInt};
-static const iocshArg peakAnalyserConfigArg6 = {"stackSize", iocshArgInt};
+static const iocshArg peakAnalyserConfigArg2 = {"maxBuffers", iocshArgInt};
+static const iocshArg peakAnalyserConfigArg3 = {"maxMemory", iocshArgInt};
+static const iocshArg peakAnalyserConfigArg4 = {"priority", iocshArgInt};
+static const iocshArg peakAnalyserConfigArg5 = {"stackSize", iocshArgInt};
 static const iocshArg * const peakAnalyserConfigArgs[] = {&peakAnalyserConfigArg0,
                                                           &peakAnalyserConfigArg1,
                                                           &peakAnalyserConfigArg2,
                                                           &peakAnalyserConfigArg3,
                                                           &peakAnalyserConfigArg4,
-                                                          &peakAnalyserConfigArg5,
-                                                          &peakAnalyserConfigArg6};
-static const iocshFuncDef configpeakAnalyser = {"peakAnalyserConfig", 7, peakAnalyserConfigArgs};
+                                                          &peakAnalyserConfigArg5};
+static const iocshFuncDef configpeakAnalyser = {"peakAnalyserConfig", 6, peakAnalyserConfigArgs};
 static void configpeakAnalyserCallFunc(const iocshArgBuf *args)
 {
-    peakAnalyserConfig(args[0].sval, args[1].sval, args[2].ival,
-            args[3].ival, args[4].ival, args[5].ival, args[6].ival);
+    peakAnalyserConfig(args[0].sval, args[1].sval,
+            args[2].ival, args[3].ival, args[4].ival, args[5].ival);
 }
 
 

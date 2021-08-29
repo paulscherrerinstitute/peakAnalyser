@@ -8,6 +8,7 @@ USR_CXXFLAGS_Linux += -std=c++11
 USR_SYS_LIBS_WIN32 += ws2_32
 
 SOURCES += ../peakAnalyserApp/src/base64.cpp
+SOURCES += ../peakAnalyserApp/src/JsonRPCClientHTTP.cpp
 SOURCES += ../peakAnalyserApp/src/peakApi.cpp
 SOURCES += ../peakAnalyserApp/src/peakAnalyser.cpp
 

@@ -247,12 +247,10 @@ The peakAnalyser driver is created with peakAnalyserConfig command,
 either from C/C++ or from the EPICS IOC shell::
 
   int peakAnalyserConfig(const char *portName,
-                         const char *hostAddress,
-                         int localPort)
+                         const char *hostAddress)
 
 * portName: asym port name this driver creates
 * hostAddress: PEAK manager server address, e.g. http://127.0.0.1:8080 
-* localPort: port number that this driver binds and listens at, to receive notifications.
 
 
 MEDM screen

@@ -39,9 +39,9 @@ asynSetMinTimerPeriod(0.001)
 #epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "10000000")
 
 # Create a peakAnalyser driver
-# peakAnalyserConfig(const char *portName, const char *hostAddress, int localPort,
+# peakAnalyserConfig(const char *portName, const char *hostAddress,
 #                   int maxBuffers, int maxMemory, int priority, int stackSize)
-peakAnalyserConfig("$(PORT)", "http://127.0.0.1:8080", 53230, 0, 0)
+peakAnalyserConfig("$(PORT)", "http://127.0.0.1:8080", 0, 0)
 
 dbLoadRecords("$(PEAK_ANALYSER)/db/peakAnalyser.template","P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 
