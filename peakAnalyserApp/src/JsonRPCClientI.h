@@ -11,6 +11,7 @@ public:
     using Callback = std::function<void(const nlohmann::json&)>;
 
     JsonRPCClientI(const std::string& uri) { m_uri = uri; };
+    virtual ~JsonRPCClientI () {};
 
     virtual std::string scheme() = 0;
     virtual nlohmann::json call(const std::string& method, const nlohmann::json& params) = 0;
