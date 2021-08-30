@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>peakAnalyser &#8212; peakAnalyser 1_0_0-4-g3059de4 documentation</title>
+    <title>peakAnalyser &#8212; peakAnalyser 1_1_0-1-g2d83e06 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -36,7 +36,7 @@
         </button>
         <a class="navbar-brand" href="#">
           peakAnalyser</a>
-        <span class="navbar-text navbar-version pull-left"><b>1.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>1.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -150,17 +150,9 @@
 <h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This is an <a class="reference external" href="https://epics-controls.org">EPICS</a> <a class="reference external" href="https://areadetector.github.io/master/index.html">areaDetector</a> driver for <a class="reference external" href="https://scientaomicron.com">Scienta Omicron</a> analysers using the <a class="reference external" href="https://scientaomicron.com/en/Components/Electron-Analysers/PEAK">PEAK</a> API.
 It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.</p>
-<p>The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver implements PEAK client
-using HTTP for the following considerations:</p>
-<ul class="simple">
-<li><p>HTTP client is (relatively) easy to implment using libCom OSI socket.
-ADEiger driver <a class="reference external" href="https://github.com/areaDetector/ADEiger/tree/master/eigerApp/src">restApi</a> provides a solid code example.</p></li>
-<li><p>WebSocket programming in C++ requires extra libraries. As this driver is aimed to support both
-Windows and Linux, this costs extra efforts to integrate these libraries either in source or in
-binary formats.</p></li>
-<li><p>The combination of <a class="reference external" href="https://github.com/zaphoyd/websocketpp">websocketpp</a> and (standalone) <a class="reference external" href="https://github.com/chriskohlhoff/asio">asio</a> is promising. However the learning curve
-of asynchronous pattern and how to adapt it to synchronous usage is steep.</p></li>
-</ul>
+<p>The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
+the implementation based on the host adress, i.e. <em>ws://127.0.0.1:8080</em> for WebSocket and <em>http://127.0.0.1:8080</em>
+for HTTP. However do notice certain <a class="reference internal" href="#http-client-issue"><span class="std std-ref">issues</span></a> regarding HTTP client.</p>
 </section>
 <section id="implementation-of-standard-driver-parameters">
 <h2><a class="toc-backref" href="#id3">Implementation of standard driver parameters</a><a class="headerlink" href="#implementation-of-standard-driver-parameters" title="Permalink to this headline">¶</a></h2>
@@ -457,7 +449,7 @@ either from C/C++ or from the EPICS IOC shell:</p>
 </div>
 <ul class="simple">
 <li><p>portName: asym port name this driver creates</p></li>
-<li><p>hostAddress: PEAK manager server address, e.g. <a class="reference external" href="http://127.0.0.1:8080">http://127.0.0.1:8080</a></p></li>
+<li><p>hostAddress: PEAK manager server address, e.g. ws://127.0.0.1:8080, http://127.0.0.1:8080</p></li>
 </ul>
 </section>
 <section id="medm-screen">
@@ -466,7 +458,7 @@ either from C/C++ or from the EPICS IOC shell:</p>
 </section>
 <section id="known-problems">
 <h2><a class="toc-backref" href="#id11">Known problems</a><a class="headerlink" href="#known-problems" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
+<ul class="simple" id="http-client-issue">
 <li><p>PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
 only when <em>unsubsribe</em> is called with the subscription id. This would create repetitive subscriptions
 if the client exits abnormally, either killed forcefully or crashed. To remove such orphan subscriptions,
