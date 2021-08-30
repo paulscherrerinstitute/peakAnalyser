@@ -524,7 +524,7 @@ void NotificationServer::clientHandler(SOCKET client)
  */
 std::unique_ptr<NotificationServer> JsonRPCClientHTTP::_notificationServer = nullptr;
 
-JsonRPCClientHTTP::JsonRPCClientHTTP (const std::string& uri) 
+JsonRPCClientHTTP::JsonRPCClientHTTP (const std::string& uri)
     : JsonRPCClientI(uri),
     mNumSockets(MAX_SOCKETS), mSockets(new socket_t[MAX_SOCKETS]),
     mMsgId(0), mTimeout(DEFAULT_TIMEOUT_REPLY)
@@ -537,7 +537,9 @@ JsonRPCClientHTTP::JsonRPCClientHTTP (const std::string& uri)
     memset(&mServerAddress, 0, sizeof(mServerAddress));
 
     if(hostToIPAddr(mHostname.c_str(), &mServerAddress.sin_addr))
-        throw std::runtime_error("invalid hostname: " + mHostname);
+        throw JsonRPCException(
+                JsonRPCException::NETWORK_EXCEPTION,
+                "invalid hostname: " + mHostname);
 
     // convert hostname to dot decimals
     char serverHost[INET_ADDRSTRLEN];
@@ -868,14 +870,28 @@ json JsonRPCClientHTTP::call(const std::string& method, const json& params)
 
     std::string value;
     if(!post(mPath, content, value))
-        throw std::runtime_error("rpc request failed: " + content);
+        throw JsonRPCException(
+                JsonRPCException::NETWORK_EXCEPTION,
+                "JSON-RPC HTTP request failed: " + content);
 
-    auto reply = json::parse(value);
+    json reply;
+    try {
+        reply = json::parse(value);
+    } catch(...) {
+        throw JsonRPCException(
+                JsonRPCException::BAD_RESPONSE,
+                method + " invalid json: " + value);
+    }
+
     if(reply.contains("error"))
-        throw std::runtime_error(method + " rpc error: " + reply["error"].dump());
+        throw JsonRPCException(
+                JsonRPCException::JSONRPC_ERROR,
+                method + " error: " + reply["error"].dump());
 
     if(!reply.contains("result"))
-        throw std::runtime_error(method + " rpc invalid response: " + value);
+        throw JsonRPCException(
+                JsonRPCException::BAD_RESPONSE,
+                method + " invalid response: " + value);
 
     return reply["result"];
 }

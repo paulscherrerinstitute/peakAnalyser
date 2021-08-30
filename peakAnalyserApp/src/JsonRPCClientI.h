@@ -5,6 +5,24 @@
 
 #include "json.hpp"
 
+class JsonRPCException : public std::runtime_error
+{
+public:
+    enum ErrorCode {
+        BAD_RESPONSE = 0,
+        JSONRPC_ERROR,
+        NETWORK_EXCEPTION,
+    };
+
+    JsonRPCException(ErrorCode code, const std::string& message):
+        std::runtime_error(message),m_code(code) {};
+
+    ErrorCode code() {return m_code;}
+
+protected:
+    ErrorCode m_code;
+};
+
 class JsonRPCClientI
 {
 public:
