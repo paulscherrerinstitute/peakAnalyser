@@ -1457,7 +1457,7 @@ void peakAnalyser::setupSpectrumDefinition()
 
     /* Call CalculateSpectrumInfo to validate the SpectrumDefinition */
     try {
-        const json spectrumInfo = analyser->calculateSpectrumInfo(m_SpectrumDefinition);
+        const json spectrumInfo = analyser->adjustSpectrumDefinition(m_SpectrumDefinition)["SpectrumInfo"];
         const json channelSettings = spectrumInfo["AnalyserSpectrumChannelSettings"].front();
         /* Update channel settings */
         setRegion(channelSettings);
