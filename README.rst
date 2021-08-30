@@ -12,7 +12,7 @@ driver for `Scienta Omicron <https://scientaomicron.com>`_ analysers using the
 
 Additional information:
 
-* `Documentation <https://paulscherrerinstitute.github.io/peakAnalyser>`_
+* `Documentation <https://paulscherrerinstitute.github.io/peakAnalyser/peakAnalyser.html>`_
 * `Release notes`_
 
 .. _Release notes: RELEASE.rst
