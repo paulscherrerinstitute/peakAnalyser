@@ -1,6 +1,7 @@
 #include "peakApi.h"
 
 #include "JsonRPCClientHTTP.h"
+#include "JsonRPCClientWS.h"
 
 #include <fstream>
 #include <iostream>
@@ -69,10 +70,14 @@ void PeakSpectrum::createAxis(const nlohmann::json& axis, std::vector<double>& a
  */
 PeakAPI::PeakAPI(const std::string& uri)
 {
-    std::string peak_uri = uri;
-    if (uri.rfind("/api") != uri.size() - 4)
-        peak_uri += "/api";
-    m_rpcClient.reset(new JsonRPCClientHTTP(peak_uri));
+    if (uri.find("http://") == 0) {
+        std::string peak_uri = uri;
+        if (uri.rfind("/api") != uri.size() - 4)
+            peak_uri += "/api";
+        m_rpcClient.reset(new JsonRPCClientHTTP(peak_uri));
+    } else {
+        m_rpcClient.reset(new JsonRPCClientWS(uri));
+    }
 }
 
 std::string PeakAPI::attachmentModeToString(AttachmentMode attachmentMode)
@@ -107,11 +112,18 @@ std::string PeakAPI::subscribe(const std::string& notification, JsonRPCClientI::
     };
 
     std::string method = notification + std::to_string(id++);
-    std::string guid = call("Subscribe",
-                       notification,
-                       method,
-                       attachmentSetting,
-                       m_rpcClient->notificationServer()).get<std::string>();
+    std::string guid;
+    if (m_rpcClient->scheme() == "http://")
+        guid = call("Subscribe",
+                    notification,
+                    method,
+                    attachmentSetting,
+                    m_rpcClient->notificationServer()).get<std::string>();
+    else
+        guid = call("Subscribe",
+                    notification,
+                    method,
+                    attachmentSetting).get<std::string>();
 
     m_rpcClient->subscribe(method, callback);
 

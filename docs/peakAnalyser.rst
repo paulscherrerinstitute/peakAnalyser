@@ -21,17 +21,9 @@ Introduction
 This is an `EPICS`_ `areaDetector`_ driver for `Scienta Omicron`_ analysers using the `PEAK`_ API.
 It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.
 
-The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver implements PEAK client
-using HTTP for the following considerations:
-
-* HTTP client is (relatively) easy to implment using libCom OSI socket.
-  ADEiger driver `restApi`_ provides a solid code example.
-* WebSocket programming in C++ requires extra libraries. As this driver is aimed to support both
-  Windows and Linux, this costs extra efforts to integrate these libraries either in source or in
-  binary formats.
-* The combination of `websocketpp`_ and (standalone) `asio`_ is promising. However the learning curve
-  of asynchronous pattern and how to adapt it to synchronous usage is steep.
-
+The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
+the implementation based on the host adress, i.e. *ws://127.0.0.1:8080* for WebSocket and *http://127.0.0.1:8080*
+for HTTP. However do notice certain :ref:`issues <http_client_issue>` regarding HTTP client.
 
 Implementation of standard driver parameters
 --------------------------------------------
@@ -250,7 +242,7 @@ either from C/C++ or from the EPICS IOC shell::
                          const char *hostAddress)
 
 * portName: asym port name this driver creates
-* hostAddress: PEAK manager server address, e.g. http://127.0.0.1:8080 
+* hostAddress: PEAK manager server address, e.g. ws://127.0.0.1:8080, http://127.0.0.1:8080
 
 
 MEDM screen
@@ -260,6 +252,8 @@ MEDM screen
 
 Known problems
 --------------
+
+.. _http_client_issue:
 
 * PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
   only when *unsubsribe* is called with the subscription id. This would create repetitive subscriptions

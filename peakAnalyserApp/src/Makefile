@@ -8,8 +8,11 @@ USR_CXXFLAGS_Linux += -std=c++11
 
 LIBRARY_IOC = peakAnalyser
 
+USR_INCLUDES += -I ../extern
+
 LIB_SRCS += base64.cpp
 LIB_SRCS += JsonRPCClientHTTP.cpp
+LIB_SRCS += JsonRPCClientWS.cpp
 LIB_SRCS += peakApi.cpp
 LIB_SRCS += peakAnalyser.cpp
 
