@@ -20,6 +20,8 @@ using namespace nlohmann;
 #include <iocsh.h>
 #include <epicsExport.h>
 
+#define DRIVER_VERSION "2.0.0"
+
 /* Analyser Modes */
 #define DetectorModeStrString       "DETECTOR_MODE_STR"
 #define ElementSetString            "ELEMENT_SETS"
@@ -218,6 +220,7 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
     createParam(ZeroSuppliesString, asynParamInt32, &ZeroSupplies);
 
     /* Initialise variables */
+    setStringParam(NDDriverVersion, DRIVER_VERSION);
     setStringParam(ADManufacturer, "Scienta Omicron");
 
     /* Connect Analyser */
