@@ -23,7 +23,7 @@ It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.
 
 The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
 the implementation based on the host address, i.e. *ws://127.0.0.1:8080* for WebSocket and *http://127.0.0.1:8080*
-for HTTP. However do notice certain :ref:`issues <http_client_issue>` regarding HTTP client.
+for HTTP. However do notice certain :ref:`issues <known_problems>` regarding both implementations.
 
 Implementation of standard driver parameters
 --------------------------------------------
@@ -250,12 +250,13 @@ MEDM screen
 
 .. image:: _static/peakAnalyser.png
 
+.. known_problems:
+
 Known problems
 --------------
-
-.. _http_client_issue:
 
 * PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
   only when *unsubsribe* is called with the subscription id. This would create repetitive subscriptions
   if the client exits abnormally, either killed forcefully or crashed. To remove such orphan subscriptions,
   PEAK server needs a reset. WebSocket client does not suffer this problem however.
+* PEAK client over WebSocket, as of PEAK 1.0.0.0-alpha.18, cannot retrieve the spectrum data.
