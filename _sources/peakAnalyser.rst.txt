@@ -22,7 +22,7 @@ This is an `EPICS`_ `areaDetector`_ driver for `Scienta Omicron`_ analysers usin
 It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.
 
 The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
-the implementation based on the host adress, i.e. *ws://127.0.0.1:8080* for WebSocket and *http://127.0.0.1:8080*
+the implementation based on the host address, i.e. *ws://127.0.0.1:8080* for WebSocket and *http://127.0.0.1:8080*
 for HTTP. However do notice certain :ref:`issues <http_client_issue>` regarding HTTP client.
 
 Implementation of standard driver parameters
