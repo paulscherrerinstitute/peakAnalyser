@@ -250,7 +250,7 @@ MEDM screen
 
 .. image:: _static/peakAnalyser.png
 
-.. known_problems:
+.. _known_problems:
 
 Known problems
 --------------
