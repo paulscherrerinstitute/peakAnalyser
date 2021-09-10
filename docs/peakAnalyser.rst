@@ -144,10 +144,15 @@ Analyser modes settings
        * Binding
 
       In case of *Binding*, $(P)$(R)EXCITATION_ENERGY must be valid.
+      $(P)$(R)LOW_ENERGY, $(P)$(R)CENTER_ENERGY and $(P)$(R)HIGH_ENERGY
+      are expected to be binding energy expressed in negative numbers.
+  * - $(P)$(R)WORK_FUNCTION, $(P)$(R)WORK_FUNCTION_RBV
+    - ao, ai
+    - Work function
   * - $(P)$(R)EXCITATION_ENERGY, $(P)$(R)EXCITATION_ENERGY_RBV
     - ao, ai
     - Photon energy, used to calculate kinetic energy from
-      binding energy input. i.e. ``kinetic = excitation - binding``.
+      binding energy input. i.e. ``kinetic = excitation - work + binding``.
   * - $(P)$(R)ELEMENT_SET_RBV
     - mbbi
     - Current analyser element set name.
