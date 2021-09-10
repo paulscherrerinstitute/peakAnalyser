@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no" ?>
+
+<Attributes>
+<Attribute name="DwellTime"    type="PARAM" source="ACQ_TIME"           datatype="DOUBLE" description="Dwell Time"/>
+<Attribute name="Sweeps"       type="PARAM" source="NEXPOSURES"         datatype="INT"    description="Sweeps"/>
+<Attribute name="PassEnergy"   type="PARAM" source="PASS_ENERGY_VAL"    datatype="DOUBLE" description="Pass Energy"/>
+<Attribute name="ElementSet"   type="PARAM" source="ELEMENT_SETS_STR"   datatype="STRING" description="Element Set"/>
+<Attribute name="LensMode"     type="PARAM" source="LENS_MODES_STR"     datatype="STRING" description="Lens Mode"/>
+<Attribute name="DetectorMode" type="PARAM" source="DETECTOR_MODE_STR"  datatype="STRING" description="Detector Mode"/>
+<Attribute name="EnergyMode"   type="PARAM" source="ENERGY_MODE_STR"    datatype="STRING" description="Energy Mode"/>
+<Attribute name="ExcitationEnergy" type="PARAM" source="EXCITATION_ENERGY"  datatype="DOUBLE" description="Excitation Energy"/>
+<Attribute name="WorkFunction" type="PARAM" source="WORK_FUNCTION"      datatype="DOUBLE" description="Work Function"/>
+<Attribute name="EnergyBegin"  type="PARAM" source="LOW_ENERGY"         datatype="DOUBLE" description="Energy Begin"/>
+<Attribute name="EnergyEnd"    type="PARAM" source="HIGH_ENERGY"        datatype="DOUBLE" description="Energy End"/>
+<Attribute name="EnergyStep"   type="PARAM" source="ENERGY_STEP"        datatype="DOUBLE" description="Energy Step"/>
+<Attribute name="ThetaXBegin"  type="PARAM" source="LOW_SLICE"          datatype="DOUBLE" description="ThetaX Begin"/>
+<Attribute name="ThetaXEnd"    type="PARAM" source="HIGH_SLICE"         datatype="DOUBLE" description="ThetaX End"/>
+<Attribute name="ThetaXStep"   type="PARAM" source="SLICE_STEP"         datatype="DOUBLE" description="ThetaX Step"/>
+<Attribute name="ThetaYBegin"  type="PARAM" source="LOW_ANGLE_Y"        datatype="DOUBLE" description="ThetaY Begin"/>
+<Attribute name="ThetaYEnd"    type="PARAM" source="HIGH_ANGLE_Y"       datatype="DOUBLE" description="ThetaY End"/>
+<Attribute name="ThetaYStep"   type="PARAM" source="ANGLE_Y_STEP"       datatype="DOUBLE" description="ThetaY Step"/>
+</Attributes>
