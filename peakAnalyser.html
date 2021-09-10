@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>peakAnalyser &#8212; peakAnalyser 2_0_0-2-gb0cd25b documentation</title>
+    <title>peakAnalyser &#8212; peakAnalyser 2_0_0-5-g4ff014b documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -310,24 +310,30 @@ do not immediately change the current analyser.</p>
 </ul>
 </dd>
 </dl>
-<p>In case of <em>Binding</em>, $(P)$(R)EXCITATION_ENERGY must be valid.</p>
+<p>In case of <em>Binding</em>, $(P)$(R)EXCITATION_ENERGY must be valid.
+$(P)$(R)LOW_ENERGY, $(P)$(R)CENTER_ENERGY and $(P)$(R)HIGH_ENERGY
+are expected to be binding energy expressed in negative numbers.</p>
 </td>
 </tr>
-<tr class="row-even"><td><p>$(P)$(R)EXCITATION_ENERGY, $(P)$(R)EXCITATION_ENERGY_RBV</p></td>
+<tr class="row-even"><td><p>$(P)$(R)WORK_FUNCTION, $(P)$(R)WORK_FUNCTION_RBV</p></td>
+<td><p>ao, ai</p></td>
+<td><p>Work function</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)EXCITATION_ENERGY, $(P)$(R)EXCITATION_ENERGY_RBV</p></td>
 <td><p>ao, ai</p></td>
 <td><p>Photon energy, used to calculate kinetic energy from
-binding energy input. i.e. <code class="docutils literal notranslate"><span class="pre">kinetic</span> <span class="pre">=</span> <span class="pre">excitation</span> <span class="pre">-</span> <span class="pre">binding</span></code>.</p></td>
+binding energy input. i.e. <code class="docutils literal notranslate"><span class="pre">kinetic</span> <span class="pre">=</span> <span class="pre">excitation</span> <span class="pre">-</span> <span class="pre">work</span> <span class="pre">+</span> <span class="pre">binding</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p>$(P)$(R)ELEMENT_SET_RBV</p></td>
+<tr class="row-even"><td><p>$(P)$(R)ELEMENT_SET_RBV</p></td>
 <td><p>mbbi</p></td>
 <td><p>Current analyser element set name.</p></td>
 </tr>
-<tr class="row-even"><td><p>$(P)$(R)LENS_MODE, $(P)$(R)LENS_MODE_RBV</p></td>
+<tr class="row-odd"><td><p>$(P)$(R)LENS_MODE, $(P)$(R)LENS_MODE_RBV</p></td>
 <td><p>mbbo, mbbi</p></td>
 <td><p>Specify the analyser lens mode to be used in the acquisition.
 The list of lens modes are initialised from the current analyser configuration.</p></td>
 </tr>
-<tr class="row-odd"><td><p>$(P)$(R)DETECTOR_MODE, $(P)$(R)DETECTOR_MODE_RBV</p></td>
+<tr class="row-even"><td><p>$(P)$(R)DETECTOR_MODE, $(P)$(R)DETECTOR_MODE_RBV</p></td>
 <td><p>mbbo, mbbi</p></td>
 <td><dl class="simple">
 <dt>Specify the detector counting mode to be used in the acquisition.</dt><dd><ul class="simple">
@@ -338,18 +344,18 @@ The list of lens modes are initialised from the current analyser configuration.<
 </dl>
 </td>
 </tr>
-<tr class="row-even"><td><p>$(P)$(R)PASS_ENERGY, $(P)$(R)PASS_ENERGY_RBV</p></td>
+<tr class="row-odd"><td><p>$(P)$(R)PASS_ENERGY, $(P)$(R)PASS_ENERGY_RBV</p></td>
 <td><p>mbbo, mbbi</p></td>
 <td><p>Specify the pass energy to be used in the acquisition.
 The choice of pass energies are initialised from the current analyser configuration.
 And it can still be further limited in some lens modes.</p></td>
 </tr>
-<tr class="row-odd"><td><p>$(P)$(R)CHANNELS, $(P)$(R)CHANNELS_RBV</p></td>
+<tr class="row-even"><td><p>$(P)$(R)CHANNELS, $(P)$(R)CHANNELS_RBV</p></td>
 <td><p>longout, longin</p></td>
 <td><p>Specify the desired number of channels in X direction.
 This will not excceed the current camera width $(P)$(R)SizeX.</p></td>
 </tr>
-<tr class="row-even"><td><p>$(P)$(R)SLICES, $(P)$(R)SLICES_RBV</p></td>
+<tr class="row-odd"><td><p>$(P)$(R)SLICES, $(P)$(R)SLICES_RBV</p></td>
 <td><p>longout, longin</p></td>
 <td><p>Specify the desired number of channels in Y direction.
 This will not excceed the current camera height $(P)$(R)SizeY.</p></td>
