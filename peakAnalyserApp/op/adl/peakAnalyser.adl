@@ -1,7 +1,7 @@
 
 file {
-	name="/afs/psi.ch/group/8215/wang/epics_driver_modules/peakAnalyser/peakAnalyserApp/op/adl/peakAnalyser.adl"
-	version=030105
+	name="/afs/psi.ch/group/8215/wang/epics_driver_modules/peakAnalyser/psiBuild/../peakAnalyserApp/op/adl/peakAnalyser.adl"
+	version=030115
 }
 display {
 	object {
@@ -505,13 +505,13 @@ text {
 	object {
 		x=424
 		y=369
-		width=80
+		width=135
 		height=20
 	}
 	"basic attribute" {
 		clr=14
 	}
-	textix="Excit."
+	textix="Excit. Energy"
 }
 "text entry" {
 	object {
@@ -1984,6 +1984,48 @@ text {
 	}
 	monitor {
 		chan="$(P)$(R)THETA_Y_COUNT_RBV"
+		clr=54
+		bclr=4
+	}
+	limits {
+	}
+}
+text {
+	object {
+		x=424
+		y=397
+		width=135
+		height=20
+	}
+	"basic attribute" {
+		clr=14
+	}
+	textix="Work Function"
+}
+"text entry" {
+	object {
+		x=566
+		y=397
+		width=100
+		height=20
+	}
+	control {
+		chan="$(P)$(R)WORK_FUNCTION"
+		clr=14
+		bclr=51
+	}
+	limits {
+	}
+}
+"text update" {
+	object {
+		x=674
+		y=397
+		width=80
+		height=18
+	}
+	monitor {
+		chan="$(P)$(R)WORK_FUNCTION_RBV"
 		clr=54
 		bclr=4
 	}

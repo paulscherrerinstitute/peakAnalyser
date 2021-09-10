@@ -23,15 +23,16 @@ using namespace nlohmann;
 #define DRIVER_VERSION "2.0.0"
 
 /* Analyser Modes */
-#define DetectorModeStrString       "DETECTOR_MODE_STR"
 #define ElementSetString            "ELEMENT_SETS"
 #define ElementSetStrString         "ELEMENT_SETS_STR"
 #define LensModeString              "LENS_MODES"
 #define LensModeStrString           "LENS_MODES_STR"
 #define PassEnergyString            "PASS_ENERGY"
-#define PassEnergyStrString         "PASS_ENERGY_STR"
+#define PassEnergyValueString       "PASS_ENERGY_VAL"
 #define DetectorModeString          "DETECTOR_MODE"
+#define DetectorModeStrString       "DETECTOR_MODE_STR"
 #define EnergyModeString            "ENERGY_MODE"
+#define EnergyModeStrString         "ENERGY_MODE_STR"
 
 /* Analyser Spectrum Region */
 #define AnalyserAcquisitionModeString "ACQUISITION_MODE"
@@ -54,6 +55,7 @@ using namespace nlohmann;
 #define AnalyserAngleYCountString   "ANGLE_Y_COUNT"
 
 #define ExcitationEnergyString      "EXCITATION_ENERGY"
+#define WorkFunctionString          "WORK_FUNCTION"
 #define DetectorChannelsString      "DETECTOR_CHANNELS"
 #define DetectorSlicesString        "DETECTOR_SLICES"
 #define AcqETAString                "ACQ_ETA"
@@ -109,7 +111,7 @@ protected:
     int DetectorMode;           /**< (asynInt32,        r/w) Specifies whether the detector is running in ADC mode (1=YES), or Pulse Counting mode (0=No).*/
     int DetectorModeStr;        /**< (asynOctet,        r/o) the string of DetectorMode */
     int PassEnergy;             /**< (asynInt32,        r/w) select a pass energy from the list of available pass energies for the current lens mode.*/
-    int PassEnergyStr;          /**< (asynInt32,        r/o) the string of PassEnergy */
+    int PassEnergyValue;        /**< (asynFloat64,      r/o) the value of PassEnergy */
     int EnergyMode;             /**< (asynInt32,        r/w) Determines if the energy scale is in 0:Kinetic 1:Binding mode. */
     int EnergyModeStr;          /**< (asynOctet,        r/o) the string of EnergyMode */
 
@@ -133,7 +135,8 @@ protected:
     int AnalyserAngleYStep;     /**< (asynFloat64,      r/w) Specifies the ThetaY step size (deg) for swept mode acquisition. */
     int AnalyserAngleYCount;    /**< (asynInt32,        r/o) Number of channels in Theta Y. */
 
-    int ExcitationEnergy;       /**< (asynInt32,        r/w) Specifies the excitation energy (eV) */
+    int ExcitationEnergy;       /**< (asynFloat64,      r/w) Specifies the excitation energy used in Binding mode (eV) */
+    int WorkFunction;           /**< (asynFloat64,      r/w) Specifies the work function used in Binding mode (eV) */
     int DetectorChannels;       /**< (asynInt32,        r/w) Specifies the current number of X channels (energy). */
     int DetectorSlices;         /**< (asynInt32,        r/w) Specifies the current number of Y channels (slices). */
     int AcqETA;                 /**< (asynFloat64,      r/o) Estimated Time of Acqusisition in seconds */
@@ -181,14 +184,15 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
     const char *functionName = "peakAnalyser";
 
     createParam(ElementSetString, asynParamInt32, &ElementSet);
-    createParam(LensModeString, asynParamInt32, &LensMode);
-    createParam(DetectorModeString, asynParamInt32, &DetectorMode);
-    createParam(PassEnergyString, asynParamInt32, &PassEnergy);
-    createParam(LensModeStrString, asynParamOctet, &LensModeStr);
-    createParam(DetectorModeStrString, asynParamOctet, &DetectorModeStr);
     createParam(ElementSetStrString, asynParamOctet, &ElementSetStr);
-    createParam(PassEnergyStrString, asynParamOctet, &PassEnergyStr);
+    createParam(LensModeString, asynParamInt32, &LensMode);
+    createParam(LensModeStrString, asynParamOctet, &LensModeStr);
+    createParam(DetectorModeString, asynParamInt32, &DetectorMode);
+    createParam(DetectorModeStrString, asynParamOctet, &DetectorModeStr);
+    createParam(PassEnergyString, asynParamInt32, &PassEnergy);
+    createParam(PassEnergyValueString, asynParamFloat64, &PassEnergyValue);
     createParam(EnergyModeString, asynParamInt32, &EnergyMode);
+    createParam(EnergyModeStrString, asynParamOctet, &EnergyModeStr);
 
     createParam(AnalyserAcquisitionModeString, asynParamInt32, &AnalyserAcquisitionMode);
     createParam(AnalyserHighEnergyString, asynParamFloat64, &AnalyserHighEnergy);
@@ -210,6 +214,7 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
     createParam(AnalyserAngleYCountString, asynParamInt32, &AnalyserAngleYCount);
 
     createParam(ExcitationEnergyString, asynParamFloat64, &ExcitationEnergy);
+    createParam(WorkFunctionString, asynParamFloat64, &WorkFunction);
     createParam(DetectorChannelsString, asynParamInt32, &DetectorChannels);
     createParam(DetectorSlicesString, asynParamInt32, &DetectorSlices);
     createParam(AcqETAString, asynParamFloat64, &AcqETA);
@@ -731,6 +736,7 @@ asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
     else if (function == EnergyMode)
     {
         setupSpectrumDefinition();
+        setStringParam(EnergyModeStr, value ? "Binding" : "Kinetic");
     }
     else if (function == DetectorChannels)
     {
@@ -877,7 +883,8 @@ asynStatus peakAnalyser::writeFloat64(asynUser *pasynUser,
     getIntegerParam(AnalyserAcquisitionMode, &acquisitionMode);
     getIntegerParam(EnergyMode, &energyMode);
 
-    if (function == ExcitationEnergy) {
+    if (function == ExcitationEnergy ||
+        function == WorkFunction) {
         if (energyMode == 1) // Binding
             setupSpectrumDefinition();
     } else if (function == ADAcquireTime) {
@@ -1196,7 +1203,7 @@ void peakAnalyser::setPassEnergy(double passEnergy)
     auto it = std::find(m_PassEnergies.begin(), m_PassEnergies.end(), passEnergy);
     if (it != m_PassEnergies.end()) {
         setIntegerParam(PassEnergy, (int)(it - m_PassEnergies.begin()));
-        setStringParam(PassEnergyStr, std::to_string(passEnergy));
+        setDoubleParam(PassEnergyValue, passEnergy);
     }
 
 }
@@ -1275,12 +1282,31 @@ std::string peakAnalyser::strftime(int seconds)
 
 void peakAnalyser::setRegion(const json& channelSettings)
 {
+    int energyMode;
+    double excitationEnergy, workFunction;
+    double lowEnergy, centerEnergy, highEnergy, stepEnergy;
+
+    getIntegerParam(EnergyMode, &energyMode);
+    getDoubleParam(ExcitationEnergy, &excitationEnergy);
+    getDoubleParam(WorkFunction, &workFunction);
+
     const json& requestedAxes = channelSettings["RequestedAxes"];
 
-    setDoubleParam(AnalyserLowEnergy,  requestedAxes["X"]["Offset"].get<double>());
-    setDoubleParam(AnalyserEnergyStep, requestedAxes["X"]["Delta"].get<double>());
-    setDoubleParam(AnalyserHighEnergy, requestedAxes["X"]["Highest"].get<double>());
-    setDoubleParam(AnalyserCenterEnergy, requestedAxes["X"]["Center"].get<double>());
+    lowEnergy = requestedAxes["X"]["Offset"].get<double>();
+    stepEnergy = requestedAxes["X"]["Delta"].get<double>();
+    highEnergy = requestedAxes["X"]["Highest"].get<double>();
+    centerEnergy = requestedAxes["X"]["Center"].get<double>();
+
+    if (energyMode == 1) { // binding energy
+        highEnergy = highEnergy + workFunction - excitationEnergy;
+        lowEnergy = lowEnergy + workFunction - excitationEnergy;
+        centerEnergy = centerEnergy + workFunction - excitationEnergy;
+    }
+
+    setDoubleParam(AnalyserLowEnergy, lowEnergy);
+    setDoubleParam(AnalyserEnergyStep, stepEnergy);
+    setDoubleParam(AnalyserHighEnergy, highEnergy);
+    setDoubleParam(AnalyserCenterEnergy, centerEnergy);
     setIntegerParam(AnalyserEnergyCount, requestedAxes["X"]["Count"].get<int>());
 
     setDoubleParam(AnalyserLowSlice, requestedAxes["Y"]["Offset"].get<double>());
@@ -1328,7 +1354,7 @@ void peakAnalyser::setupSpectrumDefinition()
     double acquireTime;
     int numExposures;
     int energyMode;
-    double excitationEnergy;
+    double excitationEnergy, workFunction;
     double lowEnergy, centerEnergy, highEnergy, stepEnergy;
     double lowAngleY, centerAngleY, highAngleY, stepAngleY;
     double centerSlice;
@@ -1365,21 +1391,20 @@ void peakAnalyser::setupSpectrumDefinition()
     setStringParam(ElementSetStr, m_Elementsets[elementSet]);
     setStringParam(LensModeStr, m_LensModes[lensMode].name);
     setStringParam(DetectorModeStr, m_DetectorModes[detectorMode]);
-    setStringParam(PassEnergyStr, std::to_string(m_PassEnergies[passEnergy]));
+    setDoubleParam(PassEnergyValue, m_PassEnergies[passEnergy]);
 
      /* Get the energy parameters */
     getIntegerParam(EnergyMode, &energyMode);
     getDoubleParam(ExcitationEnergy, &excitationEnergy);
+    getDoubleParam(WorkFunction, &workFunction);
     lowEnergy = m_RequestedAxes[AnalyserLowEnergy];
     centerEnergy = m_RequestedAxes[AnalyserCenterEnergy];
     highEnergy = m_RequestedAxes[AnalyserHighEnergy];
     stepEnergy = m_RequestedAxes[AnalyserEnergyStep];
     if (energyMode == 1) { // binding energy mode
-        double tempLowEnergy  = excitationEnergy - highEnergy;
-        centerEnergy = excitationEnergy - centerEnergy;
-        double tempHighEnergy = excitationEnergy - lowEnergy;
-        lowEnergy = tempLowEnergy;
-        highEnergy = tempHighEnergy;
+        lowEnergy = excitationEnergy - workFunction + lowEnergy;
+        highEnergy = excitationEnergy - workFunction + highEnergy;
+        centerEnergy = excitationEnergy - workFunction + centerEnergy;
     }
 
     /* Check value range */

@@ -158,7 +158,7 @@ record(mbbo, "$(P)$(R)ENERGY_MODE")
   field(ZRVL, "0")
   field(ONST, "Binding")
   field(ONVL, "1")
-#  field(PINI, "YES")
+  field(PINI, "YES")
 }
 
 record(mbbi, "$(P)$(R)ENERGY_MODE_RBV")
@@ -232,7 +232,7 @@ record(ao, "$(P)$(R)EXCITATION_ENERGY")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))EXCITATION_ENERGY")
   field(PREC, "3")
-#  field(PINI, "YES")
+  field(PINI, "YES")
 }
 
 record(ai, "$(P)$(R)EXCITATION_ENERGY_RBV")
@@ -242,6 +242,26 @@ record(ai, "$(P)$(R)EXCITATION_ENERGY_RBV")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))EXCITATION_ENERGY")
   field(SCAN, "I/O Intr")
   field(PREC, "3")
+}
+
+# Work function
+record(ao, "$(P)$(R)WORK_FUNCTION")
+{
+  field(DESC, "Work Function")
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))WORK_FUNCTION")
+  field(PREC, "1")
+  field(VAL,  "5")
+  field(PINI, "YES")
+}
+
+record(ai, "$(P)$(R)WORK_FUNCTION_RBV")
+{
+  field(DESC, "Work Function Readback")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))WORK_FUNCTION")
+  field(SCAN, "I/O Intr")
+  field(PREC, "1")
 }
 
 ###################### Energy (eV) ########################
