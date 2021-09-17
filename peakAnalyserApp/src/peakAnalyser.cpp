@@ -372,19 +372,17 @@ void peakAnalyser::peakAnalyserTask()
                 analyser->startMeasurement();
                 analyser->setupSpectrum(spectrumId);
 
-                guidCompleted = analyser->subscribe("AcquisitionCompleted",
+                guidCompleted = analyser->subscribeToState(
                     [&](const json& params) {
-                        std::string notifiedSpectrumId = params[0].get<std::string>();
-                        if (notifiedSpectrumId == spectrumId) {
-                            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                                "%s:%s: AcquisitionCompleted notification for spectrum %s\n",
-                                driverName, functionName, spectrumId.c_str());
+                        const json stateChange = params[0];
+                        std::string oldState = stateChange["OldState"].get<std::string>();
+                        std::string newState = stateChange["NewState"].get<std::string>();
+                        asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                            "%s:%s: Analyser state changed %s -> %s\n",
+                            driverName, functionName, oldState.c_str(), newState.c_str());
+                        if (newState == "Measuring" || newState == "Error") {
                             epicsEventSignal(this->stopEventId);
                         }
-                        else
-                            asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                                "%s:%s: Unsolicited AcquisitionCompleted notification for spectrum %s.\n",
-                                driverName, functionName, notifiedSpectrumId.c_str());
                     }
                 );
 

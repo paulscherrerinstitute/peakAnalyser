@@ -52,6 +52,8 @@ public:
 
     //! subscribe to a notification of the PEAK server
     std::string subscribe(const std::string& notification, JsonRPCClientI::Callback callback, AttachmentMode attachmentMode=Inline);
+    //! subscribe to state changes of the PEAK server
+    std::string subscribeToState(JsonRPCClientI::Callback callback);
     //! unsubscribe previousely subscribed notification
     void unsubscribe(const std::string& guid);
 
@@ -123,12 +125,6 @@ public:
 
     //! start an acquisition
     void start (const std::string& spectrumId);
-    /*! stop the active acquisition
-     *
-     *  If the acquisition still has not completed,
-     *  this will block, or timeout (depending the reply timeout setting)
-     */
-    void stop ();
     //! abort the active acquisition
     void abort ();
     //! start an acquisition and then wait for its finish

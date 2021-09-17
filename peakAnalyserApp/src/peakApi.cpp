@@ -133,6 +133,25 @@ std::string PeakAPI::subscribe(const std::string& notification, JsonRPCClientI::
     return guid;
 }
 
+std::string PeakAPI::subscribeToState(JsonRPCClientI::Callback callback)
+{
+    static size_t id = 0;
+
+    std::string method = "State" + std::to_string(id++);
+    std::string guid;
+    if (m_rpcClient->scheme() == "http://")
+        call("SubscribeToState", method, m_rpcClient->notificationServer())["Id"].get_to(guid);
+    else
+        call("SubscribeToState", method)["Id"].get_to(guid);
+
+    m_rpcClient->subscribe(method, callback);
+
+    // append to the subscribers list
+    m_subscribers.emplace(guid, method);
+
+    return guid;
+}
+
 void PeakAPI::unsubscribe(const std::string& guid)
 {
     for(auto it = m_subscribers.begin(); it != m_subscribers.end(); it++) {
@@ -149,19 +168,17 @@ void PeakAPI::reset()
 {
     epicsEventId completedEventId = epicsEventCreate(epicsEventEmpty);
 
-    std::string guid = subscribe("ResetCompleted",
-            [&](const json&) {
-                epicsEventSignal(completedEventId);
-            }
+    std::string guid = subscribeToState(
+        [&](const json&) {
+            epicsEventSignal(completedEventId);
+        }
     );
 
-    call("BeginReset");
+    call("ResetAsync");
 
     epicsEventWait(completedEventId);
 
     unsubscribe(guid);
-
-    call("EndReset");
 
     epicsEventDestroy(completedEventId);
 }
@@ -285,12 +302,7 @@ void PeakAnalyserClient::finishMeasurement ()
 
 void PeakAnalyserClient::start (const std::string& spectrumId)
 {
-    call("BeginAcquisition", spectrumId);
-}
-
-void PeakAnalyserClient::stop ()
-{
-    call("EndAcquisition");
+    call("AcquisitionAsync", spectrumId);
 }
 
 void PeakAnalyserClient::abort ()
@@ -302,12 +314,12 @@ void PeakAnalyserClient::acquire (const std::string& spectrumId)
 {
     epicsEventId completedEventId = epicsEventCreate(epicsEventEmpty);
 
-    std::string guid = subscribe("AcquisitionCompleted",
+    std::string guid = subscribeToState(
             [&](const json& params) {
-                std::string notifiedSpectrumId = params[0].get<std::string>();
-                if (notifiedSpectrumId == spectrumId) {
+                std::string state = params["NewState"].get<std::string>();
+                if (state == "Measuring" ||
+                    state == "Error")
                     epicsEventSignal(completedEventId);
-                }
             }
     );
 
@@ -316,8 +328,6 @@ void PeakAnalyserClient::acquire (const std::string& spectrumId)
     epicsEventWait(completedEventId);
 
     unsubscribe(guid);
-
-    stop();
 
     epicsEventDestroy(completedEventId);
 }
