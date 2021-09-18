@@ -432,7 +432,6 @@ void peakAnalyser::peakAnalyserTask()
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                         "%s:%s: Abort acquisition\n",
                         driverName, functionName);
-                    analyser->abort();
                     break;
                 } else {
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
@@ -680,8 +679,15 @@ asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
         if (value && adStatus != (int)ADStatusAcquire && adStatus != (int)ADStatusDisconnected)
             epicsEventSignal(this->startEventId);
 
-        if (!value && adStatus == (int)ADStatusAcquire)
-            epicsEventSignal(this->stopEventId);
+        if (!value && adStatus == (int)ADStatusAcquire) {
+            try {
+                analyser->abort();
+            } catch (std::exception& e) {
+                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: Failed to abort acquisition: %s\n",
+                    driverName, functionName, e.what());
+            }
+        }
     }
     else if (function == NDDataType)
     {
