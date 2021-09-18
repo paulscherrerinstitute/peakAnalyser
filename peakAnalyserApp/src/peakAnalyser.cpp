@@ -433,13 +433,11 @@ void peakAnalyser::peakAnalyserTask()
                         "%s:%s: Abort acquisition\n",
                         driverName, functionName);
                     analyser->abort();
-                    analyser->stop();
                     break;
                 } else {
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                         "%s:%s: Stop acquisition\n",
                         driverName, functionName);
-                    analyser->stop();
                     this->lock();
                     setIntegerParam(ADNumExposuresCounter, numExposuresCounter);
                     callParamCallbacks();
@@ -487,12 +485,7 @@ void peakAnalyser::peakAnalyserTask()
                     analyser->unsubscribe(guidAcquired);
                     guidAcquired = "";
                 }
-                std::string state = analyser->currentState();
-                if (state == "Acquring") {
-                    analyser->stop();
-                }
-                state = analyser->currentState();
-                if (state == "Measuring") {
+                if (analyser->currentState() == "Measuring") {
                     if (!spectrumId.empty()) {
                         analyser->finishSpectrum(spectrumId);
                         spectrumId = "";
