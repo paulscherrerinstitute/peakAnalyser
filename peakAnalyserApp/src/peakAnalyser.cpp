@@ -426,21 +426,23 @@ void peakAnalyser::peakAnalyserTask()
 
                 epicsEventWait(this->stopEventId);
 
-                // aborted if Acquire=0
+                this->lock();
                 getIntegerParam(ADAcquire, &acquire);
+                if (acquire) { // normal completion
+                    setIntegerParam(ADNumExposuresCounter, numExposuresCounter);
+                    asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                        "%s:%s: Acquisition iteration %d/%d finished\n",
+                        driverName, functionName, numExposuresCounter, numExposures);
+                }
+                callParamCallbacks();
+                this->unlock();
+
+                // aborted if Acquire=0
                 if (acquire == 0) {
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                        "%s:%s: Abort acquisition\n",
-                        driverName, functionName);
+                        "%s:%s: Acquisition iteration %d/%d aborted\n",
+                        driverName, functionName, numExposuresCounter, numExposures);
                     break;
-                } else {
-                    asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
-                        "%s:%s: Stop acquisition\n",
-                        driverName, functionName);
-                    this->lock();
-                    setIntegerParam(ADNumExposuresCounter, numExposuresCounter);
-                    callParamCallbacks();
-                    this->unlock();
                 }
             }
 
