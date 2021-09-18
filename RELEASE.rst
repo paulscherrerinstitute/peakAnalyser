@@ -7,6 +7,12 @@ The latest untagged master branch can be obtained at https://github.com/paulsche
 Release Notes
 =============
 
+2.1.0 (September 18, 2021)
+--------------------------
+
+* Improve settings when EnergyMode=Binding.
+* Adapt to PEAK 1.0.0.0-alpha.19. Call *UnsubscribeAllForObserver* on startup to remove possible orphan notifications.
+
 2.0.0 (September 2, 2021)
 -------------------------
 
