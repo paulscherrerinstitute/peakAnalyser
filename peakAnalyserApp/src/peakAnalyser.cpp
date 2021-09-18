@@ -20,7 +20,7 @@ using namespace nlohmann;
 #include <iocsh.h>
 #include <epicsExport.h>
 
-#define DRIVER_VERSION "2.0.0"
+#define DRIVER_VERSION "2.1.0"
 
 /* Analyser Modes */
 #define ElementSetString            "ELEMENT_SETS"
