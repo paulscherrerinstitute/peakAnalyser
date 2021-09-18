@@ -56,6 +56,8 @@ public:
     std::string subscribeToState(JsonRPCClientI::Callback callback);
     //! unsubscribe previousely subscribed notification
     void unsubscribe(const std::string& guid);
+    //! unsubscribe all subscribed notifications
+    void unsubscribeAll();
 
     //! reset the PEAK server
     void reset();

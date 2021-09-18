@@ -155,13 +155,25 @@ std::string PeakAPI::subscribeToState(JsonRPCClientI::Callback callback)
 void PeakAPI::unsubscribe(const std::string& guid)
 {
     for(auto it = m_subscribers.begin(); it != m_subscribers.end(); it++) {
-        if ((*it).first == guid) {
+        if (it->first == guid) {
             call("Unsubscribe", guid);
-            m_rpcClient->unsubscribe((*it).second);
+            m_rpcClient->unsubscribe(it->second);
             m_subscribers.erase(it);
             break;
         }
     }
+}
+
+void PeakAPI::unsubscribeAll()
+{
+    for(auto it = m_subscribers.begin(); it != m_subscribers.end(); it++) {
+        call("Unsubscribe", it->first);
+        m_rpcClient->unsubscribe(it->second);
+        m_subscribers.erase(it);
+    }
+
+    if (m_rpcClient->scheme() == "http://")
+        call("UnsubscribeAllForObserver", m_rpcClient->notificationServer());
 }
 
 void PeakAPI::reset()

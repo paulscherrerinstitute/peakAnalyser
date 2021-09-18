@@ -1050,6 +1050,7 @@ void peakAnalyser::connectAnalyser()
             driverName, functionName, analyserAddress.c_str());
 
     analyser.reset(new PeakAnalyserClient(analyserAddress));
+    analyser->unsubscribeAll();
 
     /* Get Analyser available configurations (element sets) */
     m_Elementsets = analyser->configurations();
