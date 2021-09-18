@@ -260,8 +260,4 @@ MEDM screen
 Known problems
 --------------
 
-* PEAK client over HTTP requires a local HTTP server to receive notifications. And the subscription ends
-  only when *unsubsribe* is called with the subscription id. This would create repetitive subscriptions
-  if the client exits abnormally, either killed forcefully or crashed. To remove such orphan subscriptions,
-  PEAK server needs a reset. WebSocket client does not suffer this problem however.
-* PEAK client over WebSocket, as of PEAK 1.0.0.0-alpha.18, cannot retrieve the spectrum data.
+* PEAK client over WebSocket, as of PEAK 1.0.0.0-alpha.19, cannot retrieve the spectrum data over WebSocket.
