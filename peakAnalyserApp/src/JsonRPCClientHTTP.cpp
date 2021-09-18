@@ -643,7 +643,7 @@ bool JsonRPCClientHTTP::connect (socket_t *s)
         mLocalHost = localHost;
     }
     if (!_notificationServer)
-        _notificationServer.reset( new NotificationServer(mLocalHost, 0) );
+        _notificationServer.reset( new NotificationServer(mLocalHost, 52320) );
 
     setNonBlock(s, false);
     s->closed = false;
