@@ -1448,8 +1448,8 @@ void peakAnalyser::setupSpectrumDefinition()
         {"ROI", {
                     {"LowX", (minX - centerX) / m_PixelDensity},
                     {"LowY", (minY - centerY) / m_PixelDensity},
-                    {"HighX",(minX + sizeX - 1 - centerX) / m_PixelDensity},
-                    {"HighY",(minY + sizeY - 1 - centerY) / m_PixelDensity}
+                    {"HighX",(minX + sizeX - centerX) / m_PixelDensity},
+                    {"HighY",(minY + sizeY - centerY) / m_PixelDensity}
         }}
     };
 
