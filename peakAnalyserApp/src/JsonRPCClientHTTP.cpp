@@ -496,9 +496,9 @@ void NotificationServer::clientHandler(SOCKET client)
 
             _subscribers.at(method)(params);
         } catch (std::exception& e) {
-            std::cerr << "Error in callback " << method << ": "<< e.what() << std::endl;
+            std::cerr << "Error in callback " << request.content << ": "<< e.what() << std::endl;
         } catch (...) {
-            std::cerr << "Error in callback " << method << std::endl;
+            std::cerr << "Error in callback " << request.content << std::endl;
         }
 
         // response
