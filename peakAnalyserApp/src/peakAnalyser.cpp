@@ -1495,7 +1495,7 @@ void peakAnalyser::setupSpectrumDefinition()
         setStringParam(AcqETAStr, this->strftime(int(eta)));
     } catch (std::exception& e) {
         asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-                "%s:%s calculateSpectrumInfo error: %s\n",
+                "%s:%s adjustSpectrumInfo error: %s\n",
                 driverName, functionName, e.what());
     }
 }
