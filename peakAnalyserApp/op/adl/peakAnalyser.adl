@@ -1,6 +1,6 @@
 
 file {
-	name="/afs/psi.ch/group/8215/wang/epics_driver_modules/peakAnalyser/peakAnalyserApp/op/adl/peakAnalyser.adl"
+	name="/afs/psi.ch/group/8215/wang/epics_driver_modules/peakAnalyser/psiBuild/../peakAnalyserApp/op/adl/peakAnalyser.adl"
 	version=030115
 }
 display {
@@ -496,7 +496,7 @@ composite {
 		x=882
 		y=551
 		width=350
-		height=110
+		height=60
 	}
 	"composite name"=""
 	"composite file"="ADAttrFile.adl"
@@ -548,7 +548,7 @@ composite {
 		x=10
 		y=10
 		width=350
-		height=340
+		height=215
 	}
 	"composite name"=""
 	"composite file"="ADSetup.adl"
@@ -567,141 +567,6 @@ composite {
 	}
 	label="Zero Power Supply"
 	press_msg="1"
-}
-"text entry" {
-	object {
-		x=466
-		y=593
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)LOW_THETA_Y"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=466
-		y=573
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)LOW_THETA_Y_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=534
-		y=593
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CENTRE_THETA_Y"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=534
-		y=573
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)CENTRE_THETA_Y_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=602
-		y=593
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)HIGH_THETA_Y"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=602
-		y=573
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)HIGH_THETA_Y_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=738
-		y=573
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)THETA_Y_WIDTH_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text entry" {
-	object {
-		x=670
-		y=593
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)THETA_Y_STEP_SIZE"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=670
-		y=573
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)THETA_Y_STEP_SIZE_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
 }
 text {
 	object {
@@ -854,36 +719,6 @@ text {
 	}
 	textix="Time estimated:"
 }
-"text entry" {
-	object {
-		x=534
-		y=538
-		width=60
-		height=20
-	}
-	control {
-		chan="$(P)$(R)CENTRE_SLICE"
-		clr=14
-		bclr=51
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=534
-		y=518
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)CENTRE_SLICE_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
 text {
 	object {
 		x=466
@@ -931,32 +766,6 @@ text {
 		clr=14
 	}
 	textix="Center"
-}
-text {
-	object {
-		x=379
-		y=580
-		width=70
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Theta Y"
-	align="horiz. centered"
-}
-text {
-	object {
-		x=377
-		y=529
-		width=70
-		height=20
-	}
-	"basic attribute" {
-		clr=14
-	}
-	textix="Theta X"
-	align="horiz. centered"
 }
 rectangle {
 	object {
@@ -1873,66 +1682,6 @@ text {
 	limits {
 	}
 }
-"text update" {
-	object {
-		x=466
-		y=518
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)LOW_SLICE_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=602
-		y=518
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)HIGH_SLICE_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=670
-		y=518
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)SLICE_STEP_SIZE_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=738
-		y=518
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)SLICE_WIDTH_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
 text {
 	object {
 		x=806
@@ -1954,36 +1703,6 @@ text {
 	}
 	monitor {
 		chan="$(P)$(R)COUNT_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=806
-		y=518
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)SLICE_COUNT_RBV"
-		clr=54
-		bclr=4
-	}
-	limits {
-	}
-}
-"text update" {
-	object {
-		x=806
-		y=573
-		width=60
-		height=18
-	}
-	monitor {
-		chan="$(P)$(R)THETA_Y_COUNT_RBV"
 		clr=54
 		bclr=4
 	}
@@ -2030,5 +1749,316 @@ text {
 		bclr=4
 	}
 	limits {
+	}
+}
+composite {
+	object {
+		x=379
+		y=573
+		width=487
+		height=40
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=379
+				y=580
+				width=70
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Theta Y"
+			align="horiz. centered"
+		}
+		"text entry" {
+			object {
+				x=466
+				y=593
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)LOW_THETA_Y"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=466
+				y=573
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)LOW_THETA_Y_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text entry" {
+			object {
+				x=534
+				y=593
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)CENTRE_THETA_Y"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=534
+				y=573
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)CENTRE_THETA_Y_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text entry" {
+			object {
+				x=602
+				y=593
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)HIGH_THETA_Y"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=602
+				y=573
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)HIGH_THETA_Y_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=670
+				y=573
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)THETA_Y_STEP_SIZE_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text entry" {
+			object {
+				x=670
+				y=593
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)THETA_Y_STEP_SIZE"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=738
+				y=573
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)THETA_Y_WIDTH_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=806
+				y=573
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)THETA_Y_COUNT_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+	}
+	"dynamic attribute" {
+		vis="if not zero"
+		chan="$(P)$(R)WITH_THETA_Y_RBV"
+	}
+}
+composite {
+	object {
+		x=377
+		y=518
+		width=489
+		height=40
+	}
+	"composite name"=""
+	children {
+		text {
+			object {
+				x=377
+				y=529
+				width=70
+				height=20
+			}
+			"basic attribute" {
+				clr=14
+			}
+			textix="Theta X"
+			align="horiz. centered"
+		}
+		"text update" {
+			object {
+				x=466
+				y=518
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)LOW_SLICE_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=534
+				y=518
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)CENTRE_SLICE_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text entry" {
+			object {
+				x=534
+				y=538
+				width=60
+				height=20
+			}
+			control {
+				chan="$(P)$(R)CENTRE_SLICE"
+				clr=14
+				bclr=51
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=602
+				y=518
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)HIGH_SLICE_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=670
+				y=518
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)SLICE_STEP_SIZE_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=738
+				y=518
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)SLICE_WIDTH_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+		"text update" {
+			object {
+				x=806
+				y=518
+				width=60
+				height=18
+			}
+			monitor {
+				chan="$(P)$(R)SLICE_COUNT_RBV"
+				clr=54
+				bclr=4
+			}
+			limits {
+			}
+		}
+	}
+	"dynamic attribute" {
+		vis="if not zero"
+		chan="$(P)$(R)WITH_SLICE_RBV"
 	}
 }
