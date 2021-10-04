@@ -42,12 +42,14 @@ using namespace nlohmann;
 #define AnalyserEnergyStepString    "ENERGY_STEP"
 #define AnalyserEnergyCountString   "ENERGY_COUNT"
 
+#define AnalyserWithSliceString     "WITH_SLICE"
 #define AnalyserHighSliceString     "HIGH_SLICE"
 #define AnalyserLowSliceString      "LOW_SLICE"
 #define AnalyserCenterSliceString   "CENTER_SLICE"
 #define AnalyserSliceStepString     "SLICE_STEP"
 #define AnalyserSliceCountString    "SLICE_COUNT"
 
+#define AnalyserWithAngleYString    "WITH_ANGLE_Y"
 #define AnalyserHighAngleYString    "HIGH_ANGLE_Y"
 #define AnalyserLowAngleYString     "LOW_ANGLE_Y"
 #define AnalyserCenterAngleYString  "CENTER_ANGLE_Y"
@@ -123,12 +125,14 @@ protected:
     int AnalyserEnergyStep;     /**< (asynFloat64,      r/w) Specifies the energy step size (eV) for swept mode acquisition. */
     int AnalyserEnergyCount;    /**< (asynInt32,        r/o) Number of channels in energy. */
 
-    int AnalyserHighSlice;      /**< (asynFloat64,      r/o) High-end ThetaX (degree/mm). */
-    int AnalyserLowSlice;       /**< (asynFloat64,      r/o) Low-end ThetaX (degree/mm). */
+    int AnalyserWithSlice;      /**< (asynInt32,        r/o) Whether Slice is supported in the current lens mode. */
+    int AnalyserHighSlice;      /**< (asynFloat64,      r/w) High-end ThetaX (degree/mm). */
+    int AnalyserLowSlice;       /**< (asynFloat64,      r/w) Low-end ThetaX (degree/mm). */
     int AnalyserCenterSlice;    /**< (asynFloat64,      r/w) Center ThetaX (degree/mm). */
-    int AnalyserSliceStep;      /**< (asynFloat64,      r/o) Theta X step size (degree/mm). */
+    int AnalyserSliceStep;      /**< (asynFloat64,      r/w) Theta X step size (degree/mm). */
     int AnalyserSliceCount;     /**< (asynInt32,        r/o) Number of channels in Theta X. */
 
+    int AnalyserWithAngleY;     /**< (asynInt32,        r/o) Whether ThetaY is supported in the current lens mode. */
     int AnalyserHighAngleY;     /**< (asynFloat64,      r/w) Specifies the high-end ThetaY (deg) for swept mode acquisition. */
     int AnalyserLowAngleY;      /**< (asynFloat64,      r/w) Specifies the low-end ThetaY energy (deg) for swept mode acquisition. */
     int AnalyserCenterAngleY;   /**< (asynFloat64,      r/w) Specifies the center ThetaY (deg) for fixed mode acquisition. */
@@ -201,12 +205,14 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
     createParam(AnalyserEnergyStepString, asynParamFloat64, &AnalyserEnergyStep);
     createParam(AnalyserEnergyCountString, asynParamInt32, &AnalyserEnergyCount);
 
+    createParam(AnalyserWithSliceString, asynParamInt32, &AnalyserWithSlice);
     createParam(AnalyserHighSliceString, asynParamFloat64, &AnalyserHighSlice);
     createParam(AnalyserLowSliceString, asynParamFloat64, &AnalyserLowSlice);
     createParam(AnalyserCenterSliceString, asynParamFloat64, &AnalyserCenterSlice);
     createParam(AnalyserSliceStepString, asynParamFloat64, &AnalyserSliceStep);
     createParam(AnalyserSliceCountString, asynParamInt32, &AnalyserSliceCount);
 
+    createParam(AnalyserWithAngleYString, asynParamInt32, &AnalyserWithAngleY);
     createParam(AnalyserHighAngleYString, asynParamFloat64, &AnalyserHighAngleY);
     createParam(AnalyserLowAngleYString, asynParamFloat64, &AnalyserLowAngleY);
     createParam(AnalyserCenterAngleYString, asynParamFloat64, &AnalyserCenterAngleY);
@@ -773,9 +779,10 @@ asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
                 asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
                         "%s:%s: %s\n",
                         driverName, functionName, message);
-
                 setIntegerParam(LensMode, oldValue);
             } else {
+                setIntegerParam(AnalyserWithSlice, m_LensModes[value].hasXDeflection);
+                setIntegerParam(AnalyserWithAngleY, m_LensModes[value].hasYDeflection);
                 setupSpectrumDefinition();
             }
         }

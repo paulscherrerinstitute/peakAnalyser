@@ -341,6 +341,13 @@ record(calc, "$(P)$(R)ENERGY_WIDTH_RBV")
 }
 
 ###################### Slices ########################
+record(bi, "$(P)$(R)WITH_SLICE_RBV")
+{
+  field(DESC, "With Slice")
+  field(DTYP, "asynInt32")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))WITH_SLICE")
+  field(SCAN, "I/O Intr")
+}
 
 record(ai, "$(P)$(R)LOW_SLICE_RBV")
 {
@@ -395,6 +402,13 @@ record(calc, "$(P)$(R)SLICE_WIDTH_RBV")
 }
 
 ###################### Theta Y (degree) ########################
+record(bi, "$(P)$(R)WITH_THETA_Y_RBV")
+{
+  field(DESC, "With Theta Y")
+  field(DTYP, "asynInt32")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))WITH_ANGLE_Y")
+  field(SCAN, "I/O Intr")
+}
 
 # Low Theta Y value
 record(ao, "$(P)$(R)LOW_THETA_Y")
