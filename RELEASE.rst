@@ -7,6 +7,12 @@ The latest untagged master branch can be obtained at https://github.com/paulsche
 Release Notes
 =============
 
+2.2.0 (October XX, 2021)
+------------------------
+
+* New records to indicate whether Theta X/Y angles are supported by the current lens mode.
+* Fix ROI calculation in PEAK 1.0.0.0-alpha.19.
+
 2.1.0 (September 18, 2021)
 --------------------------
 
