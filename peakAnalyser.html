@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>peakAnalyser &#8212; peakAnalyser 2_0_0-16-gc642005 documentation</title>
+    <title>peakAnalyser &#8212; peakAnalyser 2_1_0-7-g5b1aef2 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
@@ -18,10 +18,10 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js "></script>
-<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
-<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+<script type="text/javascript" src="_static/js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js"></script>
+<script type="text/javascript" src="_static/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
 
   </head><body>
 
@@ -36,7 +36,7 @@
         </button>
         <a class="navbar-brand" href="#">
           peakAnalyser</a>
-        <span class="navbar-text navbar-version pull-left"><b>2.0</b></span>
+        <span class="navbar-text navbar-version pull-left"><b>2.1</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -149,7 +149,7 @@
 <section id="introduction">
 <h2><a class="toc-backref" href="#id3">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This is an <a class="reference external" href="https://epics-controls.org">EPICS</a> <a class="reference external" href="https://areadetector.github.io/master/index.html">areaDetector</a> driver for <a class="reference external" href="https://scientaomicron.com">Scienta Omicron</a> analysers using the <a class="reference external" href="https://scientaomicron.com/en/Components/Electron-Analysers/PEAK">PEAK</a> API.
-It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.</p>
+It has been tested with PEAK 1.0.0.0-beta.1 with dummy camera configuration.</p>
 <p>The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
 the implementation based on the host address, i.e. <em>ws://127.0.0.1:8080</em> for WebSocket and <em>http://127.0.0.1:8080</em>
 for HTTP. However do notice certain <a class="reference internal" href="#known-problems"><span class="std std-ref">issues</span></a> regarding both implementations.</p>
@@ -350,6 +350,14 @@ The list of lens modes are initialised from the current analyser configuration.<
 The choice of pass energies are initialised from the current analyser configuration.
 And it can still be further limited in some lens modes.</p></td>
 </tr>
+<tr class="row-even"><td><p>$(P)$(R)WITH_SLICE_RBV</p></td>
+<td><p>bi</p></td>
+<td><p>Indicate whether the current lens mode supports Theta X.</p></td>
+</tr>
+<tr class="row-odd"><td><p>$(P)$(R)WITH_THETA_Y_RBV</p></td>
+<td><p>bi</p></td>
+<td><p>Indicate whether the current lens mode supports Theta Y.</p></td>
+</tr>
 <tr class="row-even"><td><p>$(P)$(R)CHANNELS, $(P)$(R)CHANNELS_RBV</p></td>
 <td><p>longout, longin</p></td>
 <td><p>Specify the desired number of channels in X direction.
@@ -465,7 +473,7 @@ either from C/C++ or from the EPICS IOC shell:</p>
 <section id="known-problems">
 <span id="id1"></span><h2><a class="toc-backref" href="#id12">Known problems</a><a class="headerlink" href="#known-problems" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>PEAK client over WebSocket, as of PEAK 1.0.0.0-alpha.19, cannot retrieve the spectrum data over WebSocket.</p></li>
+<li><p>PEAK client over WebSocket, as of PEAK 1.0.0.0-beta.1, cannot retrieve the spectrum data over WebSocket.</p></li>
 </ul>
 </section>
 </section>
@@ -483,7 +491,7 @@ either from C/C++ or from the EPICS IOC shell:</p>
     </p>
     <p>
         &copy; Copyright 2021, Xiaoqiang Wang.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.2.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br/>
     </p>
   </div>
 </footer>

@@ -19,7 +19,7 @@ Introduction
 ------------
 
 This is an `EPICS`_ `areaDetector`_ driver for `Scienta Omicron`_ analysers using the `PEAK`_ API.
-It has been tested with PEAK 1.0.0.0-alpha.18 with dummy camera configuration.
+It has been tested with PEAK 1.0.0.0-beta.1 with dummy camera configuration.
 
 The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
 the implementation based on the host address, i.e. *ws://127.0.0.1:8080* for WebSocket and *http://127.0.0.1:8080*
@@ -170,6 +170,12 @@ Analyser modes settings
     - Specify the pass energy to be used in the acquisition.
       The choice of pass energies are initialised from the current analyser configuration.
       And it can still be further limited in some lens modes.
+  * - $(P)$(R)WITH_SLICE_RBV
+    - bi
+    - Indicate whether the current lens mode supports Theta X.
+  * - $(P)$(R)WITH_THETA_Y_RBV
+    - bi
+    - Indicate whether the current lens mode supports Theta Y.
   * - $(P)$(R)CHANNELS, $(P)$(R)CHANNELS_RBV
     - longout, longin
     - Specify the desired number of channels in X direction.
@@ -260,4 +266,4 @@ MEDM screen
 Known problems
 --------------
 
-* PEAK client over WebSocket, as of PEAK 1.0.0.0-alpha.19, cannot retrieve the spectrum data over WebSocket.
+* PEAK client over WebSocket, as of PEAK 1.0.0.0-beta.1, cannot retrieve the spectrum data over WebSocket.
