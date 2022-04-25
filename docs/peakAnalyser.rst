@@ -6,7 +6,7 @@ peakAnalyser
 .. _EPICS: https://epics-controls.org
 .. _areaDetector: https://areadetector.github.io/master/index.html
 .. _Scienta Omicron: https://scientaomicron.com
-.. _PEAK: https://scientaomicron.com/en/Components/Electron-Analysers/PEAK
+.. _PEAK: https://scientaomicron.com/en/Instruments/Electron-Analysers/PEAK
 .. _ADDriver: https://areadetector.github.io/master/ADCore/ADDriver.html
 .. _websocketpp: https://github.com/zaphoyd/websocketpp
 .. _asio: https://github.com/chriskohlhoff/asio

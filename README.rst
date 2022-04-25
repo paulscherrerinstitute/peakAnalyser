@@ -4,7 +4,7 @@ peakAnalyser
 An `EPICS <https://epics-controls.org>`_
 `areaDetector <https://github.com/areaDetector/areaDetector/blob/master/README.md>`_
 driver for `Scienta Omicron <https://scientaomicron.com>`_ analysers using the 
-`PEAK <https://scientaomicron.com/en/Components/Electron-Analysers/PEAK>`_ API.
+`PEAK <https://scientaomicron.com/en/Instruments/Electron-Analysers/PEAK>`_ API.
 
 .. note::
    For analysers using `SES <ftp://ftp.scienta.se/SES>`_ software, please use
