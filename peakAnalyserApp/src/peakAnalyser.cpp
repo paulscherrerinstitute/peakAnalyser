@@ -750,6 +750,8 @@ asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
         getIntegerParam(ADSizeX, &sizeX);
         if (value > sizeX) {
             setIntegerParam(DetectorChannels, sizeX);
+        } else if (value <= 0) {
+            setIntegerParam(DetectorChannels, 1);
         }
         int acquisitionMode;
         getIntegerParam(AnalyserAcquisitionMode, &acquisitionMode);
@@ -763,6 +765,8 @@ asynStatus peakAnalyser::writeInt32(asynUser *pasynUser, epicsInt32 value)
         getIntegerParam(ADSizeY, &sizeY);
         if (value > sizeY) {
             setIntegerParam(DetectorSlices, sizeY);
+        } else if (value <= 0) {
+            setIntegerParam(DetectorSlices, 1);
         }
         setupSpectrumDefinition();
     }
