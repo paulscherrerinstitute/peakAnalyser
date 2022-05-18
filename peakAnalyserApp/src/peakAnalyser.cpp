@@ -164,6 +164,7 @@ private:
     std::vector<LensModeSetting> m_LensModes;
     std::vector<double> m_PassEnergies;
     std::vector<std::string> m_DetectorModes;
+    std::string m_DetectorModesName;
     std::map<int, double> m_RequestedAxes;
     /* Detector specific parameters */
     double m_PixelDensity; // pixels per millimeter
@@ -239,7 +240,7 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
         connectAnalyser();
     } catch (std::exception& e) {
         asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
-            "%s:%s: Error in calling PeakAPI: %s\n",
+            "%s:%s: Error in connectAnalyser: %s\n",
             driverName, functionName, e.what());
     #if ADCORE_VERSION>3 || (ADCORE_VERSION == 3 && ADCORE_REVISION >= 10)
         this->deviceIsReachable = false;
@@ -1124,8 +1125,23 @@ void peakAnalyser::connectAnalyser()
             }
     );
 
-    /* Lazily hardcoded, but actually can be retrieved by "ApiTypes" method. */
-    m_DetectorModes = {"ADC", "Pulse"};
+    /* PEAK API has renamed this type
+     *  v1.0 - DetectorMode - ["ADC", "Pulse"]
+     *  v1.1+ - AcquisitionMode - ["Image","Event"]
+     * */
+    auto types = analyser->call("ApiTypes")["types"];
+    for (auto& type: types) {
+        if (type["name"] == "AcquisitionMode") {
+            m_DetectorModesName = "AcquisitionMode";
+            type["enum_values"].get_to(m_DetectorModes);
+            break;
+        }
+        if (type["name"] == "DetectorMode") {
+            m_DetectorModesName = "CameraMode";
+            type["enum_values"].get_to(m_DetectorModes);
+            break;
+        }
+    }
 
     /* Initialise parameters from Analyser configuration/settings */
     setStringParam(ADModel, configuration["Model"].get<std::string>());
@@ -1137,7 +1153,7 @@ void peakAnalyser::connectAnalyser()
     setDoubleParam(AnalyserCenterEnergy, settings["KineticEnergy"].get<double>());
     setPassEnergy(settings["PassEnergy"].get<double>());
     setLensMode(settings["LensModeName"].get<std::string>());
-    setDetectorMode(settings["CameraMode"].get<std::string>());
+    setDetectorMode(settings[m_DetectorModesName].get<std::string>());
 
     /* Define spectrum from current analyser configuration/settings */
     m_SpectrumDefinition = {
@@ -1446,7 +1462,7 @@ void peakAnalyser::setupSpectrumDefinition()
     m_SpectrumDefinition["PassEnergy"] = m_PassEnergies[passEnergy];
     m_SpectrumDefinition["FixedAxes"] = json::object();
     m_SpectrumDefinition["SweepAxes"] = json::object();
-    m_SpectrumDefinition["CameraMode"] = m_DetectorModes[detectorMode];
+    m_SpectrumDefinition[m_DetectorModesName] = m_DetectorModes[detectorMode];
     m_SpectrumDefinition["DwellTime"] = acquireTime;
 
     int centerX = detectorSizeX / 2;
