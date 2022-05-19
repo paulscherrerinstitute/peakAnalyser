@@ -1011,6 +1011,12 @@ asynStatus peakAnalyser::writeOctet(asynUser *pasynUser, const char *value,
 void peakAnalyser::report(FILE *fp, int details)
 {
     fprintf(fp, "peakAnalyser detector %s\n", this->portName);
+    fprintf(fp, "  Manager server:      %s\n", this->m_ManagerHost.c_str());
+    if (this->analyser)
+    fprintf(fp, "  Analyser server:     %s\n", this->analyser->uri().c_str());
+    if (this->electronics)
+    fprintf(fp, "  Electronics server:  %s\n", this->electronics->uri().c_str());
+
     if (details > 0)
     {
         int nx, ny, dataType;

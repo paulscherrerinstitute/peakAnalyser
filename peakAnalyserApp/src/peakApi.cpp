@@ -69,6 +69,7 @@ void PeakSpectrum::createAxis(const nlohmann::json& axis, std::vector<double>& a
  *
  */
 PeakAPI::PeakAPI(const std::string& uri)
+    : m_uri(uri)
 {
     if (uri.find("http://") == 0) {
         std::string peak_uri = uri;

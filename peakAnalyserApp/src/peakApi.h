@@ -36,6 +36,9 @@ public:
     PeakAPI (const std::string& uri);
     virtual ~PeakAPI() {};
 
+    //! server uri
+    std::string uri() {return m_uri;}
+
     //! attachment mode used in relavent methods
     void setAttachmentMode(AttachmentMode mode) {mAttachmentMode = mode;}
     AttachmentMode attachmentMode() {return mAttachmentMode;}
@@ -73,6 +76,7 @@ protected:
     //! convert enum AttachmentMode to string
     std::string attachmentModeToString(AttachmentMode attachmentMode);
 
+    std::string m_uri;
     AttachmentMode mAttachmentMode;
     std::unique_ptr<JsonRPCClientI> m_rpcClient;
     std::map<std::string, std::string> m_subscribers;
