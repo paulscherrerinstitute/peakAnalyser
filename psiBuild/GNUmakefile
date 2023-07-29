@@ -11,6 +11,8 @@ USR_INCLUDES += -I ../../peakAnalyserApp/src/extern
 USR_SYS_LIBS_WIN32 += ws2_32
 
 SOURCES += ../peakAnalyserApp/src/base64.cpp
+SOURCES += ../peakAnalyserApp/src/HTTPCommon.cpp
+SOURCES += ../peakAnalyserApp/src/HTTPClient.cpp
 SOURCES += ../peakAnalyserApp/src/JsonRPCClientHTTP.cpp
 SOURCES += ../peakAnalyserApp/src/JsonRPCClientWS.cpp
 SOURCES += ../peakAnalyserApp/src/peakApi.cpp

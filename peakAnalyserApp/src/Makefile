@@ -11,6 +11,8 @@ LIBRARY_IOC = peakAnalyser
 USR_INCLUDES += -I ../extern
 
 LIB_SRCS += base64.cpp
+LIB_SRCS += HTTPCommon.cpp
+LIB_SRCS += HTTPClient.cpp
 LIB_SRCS += JsonRPCClientHTTP.cpp
 LIB_SRCS += JsonRPCClientWS.cpp
 LIB_SRCS += peakApi.cpp
