@@ -20,6 +20,8 @@ using namespace nlohmann;
 #include <iocsh.h>
 #include <epicsExport.h>
 
+#define PEAK_RELEASE(major,minor)  (major * 10000 + minor)
+
 #define DRIVER_VERSION "2.1.0"
 
 /* Analyser Modes */
@@ -158,6 +160,7 @@ private:
     std::unique_ptr<PeakAnalyserClient> analyser;
     std::unique_ptr<PeakElectronicsClient> electronics;
     std::string m_ManagerHost;
+    int m_PeakRelease;
     json m_SpectrumDefinition;
     /* Analyser specific parameters */
     std::vector<std::string> m_Elementsets;
@@ -1044,21 +1047,35 @@ void peakAnalyser::connectAnalyser()
         {"Version", json::object()},
         {"ReleaseVersion", json::object()}
     }));
-    setStringParam(ADSDKVersion, serverInfo["ReleaseVersion"].get<std::string>());
+    /* Get the "major.minor" part from ReleaseVersion ("PEAK-major.minor.patch.release-XXX") */
+    std::string release_str = serverInfo["ReleaseVersion"].get<std::string>();
+    int major = 0 , minor = 0;
+    sscanf(release_str.c_str(), "PEAK-%d.%d", &major, &minor);
+    m_PeakRelease = PEAK_RELEASE(major, minor);
+    setStringParam(ADSDKVersion, release_str);
     setStringParam(ADFirmwareVersion, serverInfo["Version"].get<std::string>());
 
     /* Get Analyser and Electronics servers address and connect */
-    json servers = manager.runningServers();
     std::string analyserAddress;
     std::string electronicsAddress;
     std::string cameraAddress;
-    for (auto& el: servers) {
-        if (el["Name"] == "Analyser")
-            el["Address"].get_to(analyserAddress);
-        else if (el["Name"] == "Electronics")
-            el["Address"].get_to(electronicsAddress);
-        else if (el["Name"] == "Camera")
-            el["Address"].get_to(cameraAddress);
+    /* use proxy address if client and server run on different hosts for PEAK 1.3+ */
+    if (m_ManagerHost.find("127.0.0.1") == std::string::npos &&
+        m_ManagerHost.find("localhost") == std::string::npos &&
+        m_PeakRelease >= PEAK_RELEASE(1, 3) ) {
+        analyserAddress = m_ManagerHost + "/proxy/Analyser";
+        electronicsAddress = m_ManagerHost + "/proxy/Electronics";
+        cameraAddress = m_ManagerHost + "/proxy/Camera";
+    } else {
+        json servers = manager.runningServers();
+        for (auto& el: servers) {
+            if (el["Name"] == "Analyser")
+                el["Address"].get_to(analyserAddress);
+            else if (el["Name"] == "Electronics")
+                el["Address"].get_to(electronicsAddress);
+            else if (el["Name"] == "Camera")
+                el["Address"].get_to(cameraAddress);
+        }
     }
     if (electronicsAddress.empty() ||
         analyserAddress.empty() ||
