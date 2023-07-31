@@ -69,15 +69,15 @@ void PeakSpectrum::createAxis(const nlohmann::json& axis, std::vector<double>& a
  *
  */
 PeakAPI::PeakAPI(const std::string& uri)
-    : m_uri(uri)
 {
-    if (uri.find("http://") == 0) {
-        std::string peak_uri = uri;
-        if (uri.rfind("/api") != uri.size() - 4)
-            peak_uri += "/api";
-        m_rpcClient.reset(new JsonRPCClientHTTP(peak_uri));
+    m_uri = uri;
+    if (m_uri.rfind("/api") != m_uri.size() - 4)
+        m_uri += "/api";
+
+    if (m_uri.find("http://") == 0) {
+        m_rpcClient.reset(new JsonRPCClientHTTP(m_uri));
     } else {
-        m_rpcClient.reset(new JsonRPCClientWS(uri));
+        m_rpcClient.reset(new JsonRPCClientWS(m_uri));
     }
 }
 
