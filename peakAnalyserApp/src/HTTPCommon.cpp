@@ -11,27 +11,35 @@
  */
 
 URL::URL(const std::string& url)
-    : host("127.0.0.1"), port(80), path("/")
+    : scheme("http://"), host("127.0.0.1"), port(80), path("/")
 {
-    const char scheme[] = "http://";
+    size_t address_begin, pos;
 
-    if (url.find(scheme) != 0)
-        return;
-    size_t begin = strlen(scheme);
-    size_t end = url.find('/', begin);
-    std::string address;
-    if (end == std::string::npos) {
-        address = url.substr(begin);
+    /* Extract <scheme>:// prefix */
+    pos = url.find("://");
+    if (pos != std::string::npos) {
+        scheme = url.substr(0, pos + 3);
+        address_begin = scheme.size();
     } else {
-        address = url.substr(begin, end - begin);
-        path = url.substr(end);
+        address_begin = 0;
     }
-    end = address.find(':');
-    if (end == std::string::npos) {
+    /* Separate <address>/<path> by "/" */
+    pos = url.find('/', address_begin);
+    std::string address;
+    if (pos == std::string::npos) {
+        address = url.substr(address_begin);
+    } else {
+        address = url.substr(address_begin, pos - address_begin);
+        path = url.substr(pos);
+    }
+    
+    /* Separate <host>:<port> by ":" */
+    pos = address.find(':');
+    if (pos == std::string::npos) {
         host = address;
     } else {
-        host = address.substr(0, end);
-        port = std::stoi(address.substr(end+1));
+        host = address.substr(0, pos);
+        port = std::stoi(address.substr(pos+1));
     }
 }
 

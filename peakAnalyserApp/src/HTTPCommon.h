@@ -56,11 +56,12 @@ typedef struct response
 } response_t;
 
 /*!
- * Simple parser of url of form http://<host>[:<port>][/path]
+ * Simple parser of url of form <scheme>://<host>[:<port>][/path]
  */
 struct URL
 {
     URL(const std::string& url);
+    std::string scheme;
     std::string host;
     int port;
     std::string path;
