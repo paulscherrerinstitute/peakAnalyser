@@ -6,6 +6,9 @@ file "ADBase_settings.req", P=$(P), R=$(R)
 $(P)$(R)ENERGY_MODE
 $(P)$(R)EXCITATION_ENERGY
 $(P)$(R)WORK_FUNCTION
+$(P)$(R)FOCAL_POS_X
+$(P)$(R)FOCAL_POS_Y
+$(P)$(R)FOCAL_POS_Z
 $(P)$(R)LOW_ENERGY
 $(P)$(R)HIGH_ENERGY
 $(P)$(R)CENTRE_ENERGY

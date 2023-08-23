@@ -54,8 +54,8 @@ public:
     //! query a property of the PEAK server
     nlohmann::json query (const std::string& property, const nlohmann::json& filter = nlohmann::json::object());
 
-    //! subscribe to a notification of the PEAK server
-    std::string subscribe(const std::string& notification, JsonRPCClientI::Callback callback, AttachmentMode attachmentMode=Inline);
+    //! subscribe to an observable of the PEAK server
+    std::string subscribeToObservable(const std::string& notification, JsonRPCClientI::Callback callback, AttachmentMode attachmentMode=Inline);
     //! subscribe to state changes of the PEAK server
     std::string subscribeToState(JsonRPCClientI::Callback callback);
     //! unsubscribe previousely subscribed notification

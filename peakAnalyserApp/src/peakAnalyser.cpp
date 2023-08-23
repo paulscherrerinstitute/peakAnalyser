@@ -22,7 +22,7 @@ using namespace nlohmann;
 
 #define PEAK_RELEASE(major,minor)  (major * 10000 + minor)
 
-#define DRIVER_VERSION "2.1.0"
+#define DRIVER_VERSION "3.0.0"
 
 /* Analyser Modes */
 #define ElementSetString            "ELEMENT_SETS"
@@ -35,6 +35,7 @@ using namespace nlohmann;
 #define DetectorModeStrString       "DETECTOR_MODE_STR"
 #define EnergyModeString            "ENERGY_MODE"
 #define EnergyModeStrString         "ENERGY_MODE_STR"
+#define SlitString                  "SLIT"
 
 /* Analyser Spectrum Region */
 #define AnalyserAcquisitionModeString "ACQUISITION_MODE"
@@ -60,19 +61,28 @@ using namespace nlohmann;
 
 #define ExcitationEnergyString      "EXCITATION_ENERGY"
 #define WorkFunctionString          "WORK_FUNCTION"
+#define FocalPositionXString        "FOCAL_POS_X"
+#define FocalPositionYString        "FOCAL_POS_Y"
+#define FocalPositionZString        "FOCAL_POS_Z"
 #define DetectorChannelsString      "DETECTOR_CHANNELS"
 #define DetectorSlicesString        "DETECTOR_SLICES"
 #define AcqETAString                "ACQ_ETA"
 #define AcqETAStrString             "ACQ_ETA_STR"
 #define AcqNumStepsString           "NSTEPS"
 #define AcqNumStepsCounterString    "NSTEPS_COUNTER"
+#define AcqProgressString           "ACQ_PROGRESS"
+
+#define AcqSpectrumString           "ACQ_SPECTRUM"
+#define AcqEnergyScaleString        "ACQ_ENERGY_SCALE"
+#define AcqSliceScaleString         "ACQ_SLICE_SCALE"
 
 /* Direct Electronics Control */
 #define ZeroSuppliesString          "ZERO_SUPPLIES"
 
 static const char *driverName = "peakAnalyser";
 
-static void peakAnalyserTaskC(void *drvPvt);
+static void acquisitionTaskC(void *drvPvt);
+static void spectrumTaskC(void *drvPvt);
 
 typedef struct {
     std::string name;
@@ -93,7 +103,8 @@ public:
     virtual asynStatus writeFloat64(asynUser *pasynUser, epicsFloat64 value);
     virtual asynStatus writeOctet(asynUser *pasynUser, const char *value, size_t nChars, size_t *nActual);
     void report(FILE *fp, int details);
-    void peakAnalyserTask();
+    void acquisitionTask();
+    void spectrumTask();
 
 protected:
     void connectAnalyser();
@@ -102,6 +113,7 @@ protected:
     void setElementSet(const std::string& elementSet);
     void setLensMode(const std::string& lensMode);
     void setDetectorMode(const std::string& detectorMode);
+    void setSlit(const std::string& slit);
     void setupSpectrumDefinition();
     void setRegion(const json& channelSettings);
     double clamp(double value, const double (&range)[2]);
@@ -118,6 +130,7 @@ protected:
     int PassEnergyValue;        /**< (asynFloat64,      r/o) the value of PassEnergy */
     int EnergyMode;             /**< (asynInt32,        r/w) Determines if the energy scale is in 0:Kinetic 1:Binding mode. */
     int EnergyModeStr;          /**< (asynOctet,        r/o) the string of EnergyMode */
+    int Slit;                   /**< (asynInt32,        r/w) the entrance slit. */
 
     int AnalyserAcquisitionMode;/**< (asynInt32,        r/w) Determines if the region will be measured in 0: Fixed, 1: Sweep Energy, 2: Sweep ThetaY. Sweep Energy&ThetaY. */
 
@@ -143,12 +156,20 @@ protected:
 
     int ExcitationEnergy;       /**< (asynFloat64,      r/w) Specifies the excitation energy used in Binding mode (eV) */
     int WorkFunction;           /**< (asynFloat64,      r/w) Specifies the work function used in Binding mode (eV) */
+    int FocalPositionX;         /**< (asynFloat64,      r/w) Specifies the focal position X (mm) */
+    int FocalPositionY;         /**< (asynFloat64,      r/w) Specifies the focal position Y (mm) */
+    int FocalPositionZ;         /**< (asynFloat64,      r/w) Specifies the focal position Z, working distance (mm) */
     int DetectorChannels;       /**< (asynInt32,        r/w) Specifies the current number of X channels (energy). */
     int DetectorSlices;         /**< (asynInt32,        r/w) Specifies the current number of Y channels (slices). */
     int AcqETA;                 /**< (asynFloat64,      r/o) Estimated Time of Acqusisition in seconds */
     int AcqETAStr;              /**< (asynOctet,        r/o) Estimated Time of Acqusisition in hh::mm::ss format */
     int AcqNumSteps;            /**< (asynInt32,        r/o) Number of steps to acquire */
     int AcqNumStepsCounter;     /**< (asynInt32,        r/o) Number of steps acquired */
+    int AcqProgress;            /**< (asynFloat64,      r/o) Acquisition progress in percent */
+
+    int AcqSpectrum;            /**< (asynFloat64Array, r/o) Acquired 1D spectrum */
+    int AcqEnergyScale;         /**< (asynFloat64Array, r/o) Energy scale of the acquired 1D spectrum */
+    int AcqSliceScale;          /**< (asynFloat64Array, r/o) Slice scale of the acquired 1D spectrum */
 
     int ZeroSupplies;           /**< (asynInt32,        r/w) reset the power supplies to zero*/
     #define LAST_PEAKANALYSER_PARAM ZeroSupplies
@@ -156,21 +177,26 @@ protected:
 private:
     epicsEventId startEventId;
     epicsEventId stopEventId;
+    epicsEventId spectrumEventId;
 
     std::unique_ptr<PeakAnalyserClient> analyser;
     std::unique_ptr<PeakElectronicsClient> electronics;
     std::string m_ManagerHost;
     int m_PeakRelease;
+    bool m_UseProxy;
     json m_SpectrumDefinition;
+    nlohmann::json m_SpectrumLive;
     /* Analyser specific parameters */
     std::vector<std::string> m_Elementsets;
     std::vector<LensModeSetting> m_LensModes;
     std::vector<double> m_PassEnergies;
     std::vector<std::string> m_DetectorModes;
-    std::string m_DetectorModesName;
+    std::vector<std::string> m_Slits;
     std::map<int, double> m_RequestedAxes;
     /* Detector specific parameters */
     double m_PixelDensity; // pixels per millimeter
+    std::map<std::string, double> m_DetectorArea;
+    std::map<std::string, double> m_ChannelArea;
 };
 
 /* Number of asyn parameters (asyn commands) this driver supports*/
@@ -183,7 +209,7 @@ peakAnalyser::~peakAnalyser()
 
 /* peakAnalyser constructor */
 peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int maxBuffers, size_t maxMemory, int priority, int stackSize)
-    : ADDriver(portName, 1, (int)NUM_PEAKANALYSER_PARAMS, maxBuffers, maxMemory,
+    : ADDriver(portName, 2, (int)NUM_PEAKANALYSER_PARAMS, maxBuffers, maxMemory,
                asynEnumMask | asynFloat64ArrayMask, asynEnumMask | asynFloat64ArrayMask,
                ASYN_CANBLOCK, 1,   /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=0, autoConnect=1 */
                priority, stackSize), m_ManagerHost(hostAddress)
@@ -201,6 +227,7 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
     createParam(PassEnergyValueString, asynParamFloat64, &PassEnergyValue);
     createParam(EnergyModeString, asynParamInt32, &EnergyMode);
     createParam(EnergyModeStrString, asynParamOctet, &EnergyModeStr);
+    createParam(SlitString, asynParamInt32, &Slit);
 
     createParam(AnalyserAcquisitionModeString, asynParamInt32, &AnalyserAcquisitionMode);
     createParam(AnalyserHighEnergyString, asynParamFloat64, &AnalyserHighEnergy);
@@ -225,18 +252,28 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
 
     createParam(ExcitationEnergyString, asynParamFloat64, &ExcitationEnergy);
     createParam(WorkFunctionString, asynParamFloat64, &WorkFunction);
+    createParam(FocalPositionXString, asynParamFloat64, &FocalPositionX);
+    createParam(FocalPositionYString, asynParamFloat64, &FocalPositionY);
+    createParam(FocalPositionZString, asynParamFloat64, &FocalPositionZ);
     createParam(DetectorChannelsString, asynParamInt32, &DetectorChannels);
     createParam(DetectorSlicesString, asynParamInt32, &DetectorSlices);
     createParam(AcqETAString, asynParamFloat64, &AcqETA);
     createParam(AcqETAStrString, asynParamOctet, &AcqETAStr);
     createParam(AcqNumStepsString, asynParamInt32, &AcqNumSteps);
     createParam(AcqNumStepsCounterString, asynParamInt32, &AcqNumStepsCounter);
+    createParam(AcqProgressString, asynParamFloat64, &AcqProgress);
+
+    createParam(AcqSpectrumString, asynParamFloat64Array, &AcqSpectrum);
+    createParam(AcqEnergyScaleString, asynParamFloat64Array, &AcqEnergyScale);
+    createParam(AcqSliceScaleString, asynParamFloat64Array, &AcqSliceScale);
 
     createParam(ZeroSuppliesString, asynParamInt32, &ZeroSupplies);
 
     /* Initialise variables */
     setStringParam(NDDriverVersion, DRIVER_VERSION);
     setStringParam(ADManufacturer, "Scienta Omicron");
+    setIntegerParam(NDDataType, NDFloat32);
+    setIntegerParam(NDColorMode, NDColorModeMono);
 
     /* Connect Analyser */
     try {
@@ -269,11 +306,25 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
                 driverName, functionName);
     }
 
+    /* Signal to the spectrum task at each spectrum update */
+    this->spectrumEventId = epicsEventCreate(epicsEventEmpty);
+    if (!this->spectrumEventId) {
+        asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                "%s:%s: epicsEventCreate failure for spectrum event\n",
+                driverName, functionName);
+    }
+
     /* Create the acquisition thread */
-    status = (epicsThreadCreate("PeakAnalyserTask",
+    status = (epicsThreadCreate("PeakAnalyserAcquisitionTask",
         epicsThreadPriorityMedium, epicsThreadGetStackSize(
         epicsThreadStackMedium),
-        (EPICSTHREADFUNC) peakAnalyserTaskC, this) == NULL);
+        (EPICSTHREADFUNC) acquisitionTaskC, this) == NULL);
+
+    /* Create the acquisition thread */
+    status = (epicsThreadCreate("PeakAnalyserSpectrumTask",
+        epicsThreadPriorityMedium, epicsThreadGetStackSize(
+        epicsThreadStackMedium),
+        (EPICSTHREADFUNC) spectrumTaskC, this) == NULL);
 
     if (status) {
         asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
@@ -282,10 +333,10 @@ peakAnalyser::peakAnalyser(const char *portName, const char *hostAddress, int ma
     }
 }
 
-static void peakAnalyserTaskC(void *drvPvt)
+static void acquisitionTaskC(void *drvPvt)
 {
     peakAnalyser *pPvt = (peakAnalyser *) drvPvt;
-    pPvt->peakAnalyserTask();
+    pPvt->acquisitionTask();
 }
 
 /** Task to acquire spectrum from analyser and send them up to areaDetector.
@@ -293,7 +344,7 @@ static void peakAnalyserTaskC(void *drvPvt)
  *  It is started in the class constructor and must not return until the IOC stops.
  *
  */
-void peakAnalyser::peakAnalyserTask()
+void peakAnalyser::acquisitionTask()
 {
     int status = asynSuccess;
     int adStatus;
@@ -303,12 +354,12 @@ void peakAnalyser::peakAnalyserTask()
     int imageMode, imageCounter;
     int numExposures, numExposuresCounter;
     int numImages, numImagesCounter;
-    int numStepsCounter;
+    int numSteps, numStepsCounter;
     epicsTimeStamp startTime;
-    std::string spectrumId, guidAcquired, guidCompleted;
+    std::string spectrumId, guidAcquired, guidState;
     std::string statusMessage;
     NDArray *pImage;
-    const char *functionName = "peakAnalyserTask";
+    const char *functionName = "acquisitionTask";
 
     this->lock();
     while (1)
@@ -345,6 +396,7 @@ void peakAnalyser::peakAnalyserTask()
             getIntegerParam(ADAcquire, &acquire);
             setIntegerParam(ADNumExposuresCounter, 0);
             setIntegerParam(ADNumImagesCounter, 0);
+            setDoubleParam(AcqProgress, 0.0);
             setIntegerParam(ADStatus, ADStatusAcquire);
             setStringParam(ADStatusMessage, "Acquiring....");
         }
@@ -363,6 +415,8 @@ void peakAnalyser::peakAnalyserTask()
         getIntegerParam(ADNumImagesCounter, &numImagesCounter);
         getIntegerParam(ADNumExposuresCounter, &numExposuresCounter);
 
+        getIntegerParam(AcqNumSteps, &numSteps);
+
         this->unlock();
 
         /* Acquire */
@@ -370,19 +424,22 @@ void peakAnalyser::peakAnalyserTask()
         try {
             // first frame setup
             if (numImagesCounter == 0) {
+                /* Analyser has to be in "Active" state */
                 std::string state = analyser->currentState();
                 if (state != "Active")
-                    throw std::runtime_error("Analyser not ready: " + state);
+                    throw std::runtime_error("Analyser not active: " + state);
 
                 asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                     "%s:%s: Start measurement\n",
                     driverName, functionName);
 
+                /* Pass our spectrum definition to analyser */
                 spectrumId = analyser->defineSpectrum(m_SpectrumDefinition);
                 analyser->startMeasurement();
                 analyser->setupSpectrum(spectrumId);
 
-                guidCompleted = analyser->subscribeToState(
+                /* Subscribe to analyser state change */
+                guidState = analyser->subscribeToState(
                     [&](const json& params) {
                         const json stateChange = params[0];
                         std::string oldState = stateChange["OldState"].get<std::string>();
@@ -396,7 +453,8 @@ void peakAnalyser::peakAnalyserTask()
                     }
                 );
 
-                guidAcquired = analyser->subscribe("SpectrumAcquired",
+                /* Subscribe to spectrum update progress */
+                guidAcquired = analyser->subscribeToObservable("SpectrumUpdate",
                     [&](const json& params) {
                         const json spectrum = params[0]["Value"];
                         if (spectrum.is_null())
@@ -409,10 +467,15 @@ void peakAnalyser::peakAnalyserTask()
                             setRegion(channelSettings);
                         }
                         setIntegerParam(AcqNumStepsCounter, ++numStepsCounter);
+                        setDoubleParam(AcqProgress, 100.0 * numStepsCounter / numSteps * numExposuresCounter / numExposures);
                         callParamCallbacks();
                         this->unlock();
+                        // signal spectrumTask to refresh live spectrum data
+                        m_SpectrumLive = spectrum["SpectrumChannels"].front();
+                        m_SpectrumLive["IsLast"] = (numSteps == numStepsCounter);
+                        epicsEventTrigger(this->spectrumEventId);
                     },
-                    PeakAnalyserClient::None // request no image data
+                    PeakAnalyserClient::Http // request no image data
                 );
             }
 
@@ -421,7 +484,7 @@ void peakAnalyser::peakAnalyserTask()
             while (numExposuresCounter ++ < numExposures) {
                 // zero step counter
                 numStepsCounter = 0;
-                // clear uncaught stopEvent, possibly from repetive subscribed notification
+                // clear uncaught stopEvent, possibly from repetitive subscribed notification
                 epicsEventTryWait(this->stopEventId);
                 // begin acquisition
                 asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
@@ -447,7 +510,7 @@ void peakAnalyser::peakAnalyserTask()
                 callParamCallbacks();
                 this->unlock();
 
-                // aborted if Acquire=0
+                // aborted by user if Acquire is 0
                 if (acquire == 0) {
                     asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                         "%s:%s: Acquisition iteration %d/%d aborted\n",
@@ -472,8 +535,8 @@ void peakAnalyser::peakAnalyserTask()
                 asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                     "%s:%s: Finish measurement\n",
                     driverName, functionName);
-                analyser->unsubscribe(guidCompleted);
-                guidCompleted = "";
+                analyser->unsubscribe(guidState);
+                guidState = "";
                 analyser->unsubscribe(guidAcquired);
                 guidAcquired = "";
                 analyser->finishSpectrum(spectrumId);
@@ -488,9 +551,9 @@ void peakAnalyser::peakAnalyserTask()
                     driverName, functionName, e.what());
             // cleanup
             try {
-                if (!guidCompleted.empty()) {
-                    analyser->unsubscribe(guidCompleted);
-                    guidCompleted = "";
+                if (!guidState.empty()) {
+                    analyser->unsubscribe(guidState);
+                    guidState = "";
                 }
                 if (!guidAcquired.empty()) {
                     analyser->unsubscribe(guidAcquired);
@@ -575,6 +638,61 @@ void peakAnalyser::peakAnalyserTask()
     }
 }
 
+static void spectrumTaskC(void *drvPvt)
+{
+    peakAnalyser *pPvt = (peakAnalyser *) drvPvt;
+    pPvt->spectrumTask();
+}
+
+/** Task to acquire spectrum from analyser and send them up to areaDetector.
+ *
+ *  It is started in the class constructor and must not return until the IOC stops.
+ *
+ */
+void peakAnalyser::spectrumTask()
+{
+    epicsTimeStamp last, now;
+    const char *functionName = "spectrumTask";
+
+    epicsTimeGetCurrent(&last);
+    while (1) {
+        epicsEventWait(spectrumEventId);
+        /* Throttle the update rate to 1Hz, but always update the last point */
+        epicsTimeGetCurrent(&now);
+        if (epicsTimeDiffInSeconds(&now, &last) > 1 || m_SpectrumLive["IsLast"].get<bool>()) {
+            last = now;
+            try {
+                auto spectrum = PeakSpectrum();
+                std::string serverUri;
+                /* When using manager server as a reverse proxy,
+                its address will be used to modify the HTTP attachment URI */
+                spectrum.fromSpectrumChannel(m_SpectrumLive, m_UseProxy ? m_ManagerHost : "");
+
+                /* Callback NDArray for live images */
+                NDArray *pImage = this->pNDArrayPool->alloc((int)spectrum.rank, spectrum.dims, NDFloat32, 0,  NULL);
+                memcpy(pImage->pData,  (void *)spectrum.data.data(), spectrum.data.size() * sizeof(float));
+                pImage->uniqueId = 0;
+                pImage->timeStamp = now.secPastEpoch + now.nsec / 1.e9;
+                doCallbacksGenericPointer(pImage, NDArrayData, 1);
+                /* Free the image buffers */
+                pImage->release();
+
+                /* Callback live integrated spectrum */
+                auto integrated_spectrum = spectrum.integrate();
+                this->lock();
+                doCallbacksFloat64Array(spectrum.xaxis.data(), spectrum.xaxis.size(), AcqEnergyScale, 0);
+                doCallbacksFloat64Array(spectrum.yaxis.data(), spectrum.yaxis.size(), AcqSliceScale, 0);
+                doCallbacksFloat64Array(integrated_spectrum.data(), integrated_spectrum.size(), AcqSpectrum, 0);
+                this->unlock();
+            } catch (std::exception& e) {
+                asynPrint(this->pasynUserSelf, ASYN_TRACE_ERROR,
+                    "%s:%s: Failed to get spectrum data: %s\n",
+                    driverName, functionName, e.what());
+            }
+        }
+    }
+}
+
 /** Called when asyn clients call pasynEnum->read().
   * The base class implementation simply prints an error message.
   * Derived classes may reimplement this function if required.
@@ -652,6 +770,22 @@ asynStatus peakAnalyser::readEnum(asynUser *pasynUser,
             strings[i] = epicsStrDup(m_DetectorModes.at(i).c_str());
             asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
                     "%s:%s: Reading detector mode of %s\n",
+                    driverName, functionName, strings[i]);
+            values[i]  = (int)i;
+            severities[i] = 0;
+        }
+    }
+    else if (function == Slit)
+    {
+        for (i=0; ((i<m_Slits.size()) && (i<nElements)); i++)
+        {
+            if (strings[i])
+            {
+                free(strings[i]);
+            }
+            strings[i] = epicsStrDup(m_Slits.at(i).c_str());
+            asynPrint(this->pasynUserSelf, ASYN_TRACE_FLOW,
+                    "%s:%s: Reading slit of %s\n",
                     driverName, functionName, strings[i]);
             values[i]  = (int)i;
             severities[i] = 0;
@@ -892,7 +1026,7 @@ asynStatus peakAnalyser::writeFloat64(asynUser *pasynUser,
      * status at the end, but that's OK */
     status = setDoubleParam(function, value);
 
-    /* Whether calling setupSpectrumDefiniton depends on acquistion mode */
+    /* Whether calling setupSpectrumDefinition depends on acquistion mode */
     int acquisitionMode, energyMode;
     getIntegerParam(AnalyserAcquisitionMode, &acquisitionMode);
     getIntegerParam(EnergyMode, &energyMode);
@@ -901,6 +1035,10 @@ asynStatus peakAnalyser::writeFloat64(asynUser *pasynUser,
         function == WorkFunction) {
         if (energyMode == 1) // Binding
             setupSpectrumDefinition();
+    } else if (function == FocalPositionX ||
+               function == FocalPositionY ||
+               function == FocalPositionZ) {
+        setupSpectrumDefinition();
     } else if (function == ADAcquireTime) {
         setupSpectrumDefinition();
     } else if ( function == AnalyserCenterSlice) {
@@ -1059,10 +1197,11 @@ void peakAnalyser::connectAnalyser()
     std::string analyserAddress;
     std::string electronicsAddress;
     std::string cameraAddress;
-    /* use proxy address if client and server run on different hosts for PEAK 1.3+ */
+    /* Use proxy address if client and server run on different hosts for PEAK 1.3+ */
     if (m_ManagerHost.find("127.0.0.1") == std::string::npos &&
         m_ManagerHost.find("localhost") == std::string::npos &&
         m_PeakRelease >= PEAK_RELEASE(1, 3) ) {
+        m_UseProxy = true;
         analyserAddress = m_ManagerHost + "/proxy/Analyser";
         electronicsAddress = m_ManagerHost + "/proxy/Electronics";
         cameraAddress = m_ManagerHost + "/proxy/Camera";
@@ -1093,7 +1232,8 @@ void peakAnalyser::connectAnalyser()
             driverName, functionName, analyserAddress.c_str());
 
     analyser.reset(new PeakAnalyserClient(analyserAddress));
-    analyser->unsubscribeAll();
+    try { analyser->unsubscribeAll(); } catch (...) {}
+
 
     /* Get Analyser available configurations (element sets) */
     m_Elementsets = analyser->configurations();
@@ -1103,10 +1243,10 @@ void peakAnalyser::connectAnalyser()
         {"Name", json::object()},
         {"Model", json::object()},
         {"SerialNumber", json::object()},
-        {"LensModes", {
+        {"OpticsLensModes", {
             {"{}", {
                 {"Name", json::object()},
-                {"DoubleParameters", json::object()}
+                {"Enabled", json::object()}
             }}
         }},
         {"Calibration", {
@@ -1121,23 +1261,29 @@ void peakAnalyser::connectAnalyser()
      * and existence of angle x/y and its range if existing.
      */
     m_LensModes.clear();
-    for (auto& lensMode: configuration["LensModes"]) {
+    for (auto& lensMode: configuration["OpticsLensModes"]) {
+        /* Skip disabled lens modes */
+        if (!lensMode["Enabled"].is_boolean()||!lensMode["Enabled"].get<bool>())
+            continue;
+
         LensModeSetting s;
 
         s.name = lensMode["Name"].get<std::string>();
 
-        const json passEnergy = lensMode["DoubleParameters"]["PassEnergy"];
+        json limits = analyser->call("GetLensModeLimits", s.name, 1);
+
+        const json passEnergy = limits["AllDomainParameters"]["PassEnergy"];
         s.passEnergyRange[0] = passEnergy["MinimumValue"].get<double>();
         s.passEnergyRange[1] = passEnergy["MaximumValue"].get<double>();
 
-        const json xDeflection = lensMode["DoubleParameters"]["XDeflection"];
+        const json xDeflection = limits["AllDomainParameters"]["LensThetaX"];
         s.hasXDeflection = xDeflection.is_object();
         if (s.hasXDeflection) {
             s.xDeflectionRange[0] = xDeflection["MinimumValue"].get<double>();
             s.xDeflectionRange[1] = xDeflection["MaximumValue"].get<double>();
         }
 
-        const json yDeflection = lensMode["DoubleParameters"]["YDeflection"];
+        const json yDeflection = limits["AllDomainParameters"]["LensThetaY"];
         s.hasYDeflection = yDeflection.is_object();
         if (s.hasYDeflection) {
             s.yDeflectionRange[0] = yDeflection["MinimumValue"].get<double>();
@@ -1152,20 +1298,14 @@ void peakAnalyser::connectAnalyser()
             }
     );
 
-    /* PEAK API has renamed this type
-     *  v1.0 - DetectorMode - ["ADC", "Pulse"]
-     *  v1.1+ - AcquisitionMode - ["Image","Event"]
-     * */
+    /* Get acquisition modes: Image, Event */
     auto types = analyser->call("ApiTypes")["types"];
+    m_DetectorModes.clear();
     for (auto& type: types) {
         if (type["name"] == "AcquisitionMode") {
-            m_DetectorModesName = "AcquisitionMode";
-            type["enum_values"].get_to(m_DetectorModes);
-            break;
-        }
-        if (type["name"] == "DetectorMode") {
-            m_DetectorModesName = "CameraMode";
-            type["enum_values"].get_to(m_DetectorModes);
+            for(auto& mode: type["enum_values"]) {
+                m_DetectorModes.push_back(mode["name"].get<std::string>());
+            }
             break;
         }
     }
@@ -1180,7 +1320,7 @@ void peakAnalyser::connectAnalyser()
     setDoubleParam(AnalyserCenterEnergy, settings["KineticEnergy"].get<double>());
     setPassEnergy(settings["PassEnergy"].get<double>());
     setLensMode(settings["LensModeName"].get<std::string>());
-    setDetectorMode(settings[m_DetectorModesName].get<std::string>());
+    setDetectorMode(settings["AcquisitionMode"].get<std::string>());
 
     /* Define spectrum from current analyser configuration/settings */
     m_SpectrumDefinition = {
@@ -1192,7 +1332,9 @@ void peakAnalyser::connectAnalyser()
         {"SweepAxes",  json::object() },
         {"PassEnergy", settings["PassEnergy"]},
         {"DwellTime", settings["DwellTime"]},
-        {"StoreSpectrum", false}
+        {"StoreSpectrum", false},
+        {"StoreAcquisitionData", false},
+        {"UseRegionDelay", false}
     };
 
     /* Use server returned spectrumInfo to get camera dimensions
@@ -1206,7 +1348,30 @@ void peakAnalyser::connectAnalyser()
         setIntegerParam(ADMaxSizeX, sizeX);
         setIntegerParam(ADMaxSizeY, sizeY);
         m_PixelDensity = sizeX / physicalSizeX;
+        el["ChannelArea"].get_to(m_ChannelArea);
+        el["DetectorArea"].get_to(m_DetectorArea);
     }
+
+    /* Get analyser slits list */
+    json analyserServerSettings = analyser->query("SharedConfiguration", json({
+        {"SlitConfigurationPresets", {
+            {"{}", {
+                {"Name", json::object()}
+            }}
+        }}
+    }));
+    m_Slits.clear();
+    for(auto& slit: analyserServerSettings["SlitConfigurationPresets"]) {
+        m_Slits.push_back(slit["Name"].get<std::string>());
+    }
+    /* Sort slits by their names, in case that server returns an unordered list */
+    std::sort(m_Slits.begin(), m_Slits.end());
+
+    /* Set the current slit */
+    json currentSlit = analyser->query("CurrentSlit", json({
+        {"Name", json::object()}
+    }));
+    setSlit(currentSlit["Name"].get<std::string>());
 
     /* Retrieve calibrated ROI setting from Camera server */
     PeakCameraClient camera(cameraAddress);
@@ -1291,6 +1456,14 @@ void peakAnalyser::setDetectorMode(const std::string& detectorMode)
     }
 }
 
+void peakAnalyser::setSlit(const std::string& slit)
+{
+    auto it = std::find(m_Slits.begin(), m_Slits.end(), slit);
+    if (it != m_Slits.end()) {
+        setIntegerParam(Slit, (int)(it - m_Slits.begin()));
+    }
+}
+
 double peakAnalyser::clamp(double value, const double (&range)[2])
 {
     if (value < range[0])
@@ -1344,7 +1517,7 @@ void peakAnalyser::setRegion(const json& channelSettings)
 
     lowEnergy = requestedAxes["X"]["Offset"].get<double>();
     stepEnergy = requestedAxes["X"]["Delta"].get<double>();
-    highEnergy = requestedAxes["X"]["Highest"].get<double>();
+    highEnergy = requestedAxes["X"]["LastOffset"].get<double>();
     centerEnergy = requestedAxes["X"]["Center"].get<double>();
 
     if (energyMode == 1) { // binding energy
@@ -1361,14 +1534,14 @@ void peakAnalyser::setRegion(const json& channelSettings)
 
     setDoubleParam(AnalyserLowSlice, requestedAxes["Y"]["Offset"].get<double>());
     setDoubleParam(AnalyserSliceStep, requestedAxes["Y"]["Delta"].get<double>());
-    setDoubleParam(AnalyserHighSlice, requestedAxes["Y"]["Highest"].get<double>());
+    setDoubleParam(AnalyserHighSlice, requestedAxes["Y"]["LastOffset"].get<double>());
     setDoubleParam(AnalyserCenterSlice,requestedAxes["Y"]["Center"].get<double>());
     setIntegerParam(AnalyserSliceCount, requestedAxes["Y"]["Count"].get<int>());
 
     if (requestedAxes.contains("Z")) {
         setDoubleParam(AnalyserLowAngleY, requestedAxes["Z"]["Offset"].get<double>());
         setDoubleParam(AnalyserAngleYStep, requestedAxes["Z"]["Delta"].get<double>());
-        setDoubleParam(AnalyserHighAngleY, requestedAxes["Z"]["Highest"].get<double>());
+        setDoubleParam(AnalyserHighAngleY, requestedAxes["Z"]["LastOffset"].get<double>());
         setDoubleParam(AnalyserCenterAngleY, requestedAxes["Z"]["Center"].get<double>());
         setIntegerParam(AnalyserAngleYCount, requestedAxes["Z"]["Count"].get<int>());
     } else {
@@ -1408,6 +1581,7 @@ void peakAnalyser::setupSpectrumDefinition()
     double lowEnergy, centerEnergy, highEnergy, stepEnergy;
     double lowAngleY, centerAngleY, highAngleY, stepAngleY;
     double centerSlice;
+    double focalPositionX, focalPositionY, focalPositionZ;
 
     getIntegerParam(AnalyserAcquisitionMode, &acquisitionMode);
 
@@ -1426,6 +1600,9 @@ void peakAnalyser::setupSpectrumDefinition()
     getIntegerParam(LensMode, &lensMode);
     getIntegerParam(ElementSet, &elementSet);
     getIntegerParam(PassEnergy, &passEnergy);
+    getDoubleParam(FocalPositionX, &focalPositionX);
+    getDoubleParam(FocalPositionY, &focalPositionY);
+    getDoubleParam(FocalPositionZ, &focalPositionZ);
 
     /* Check enum range */
     if (elementSet >= (int)m_Elementsets.size() ||
@@ -1489,17 +1666,21 @@ void peakAnalyser::setupSpectrumDefinition()
     m_SpectrumDefinition["PassEnergy"] = m_PassEnergies[passEnergy];
     m_SpectrumDefinition["FixedAxes"] = json::object();
     m_SpectrumDefinition["SweepAxes"] = json::object();
-    m_SpectrumDefinition[m_DetectorModesName] = m_DetectorModes[detectorMode];
+    m_SpectrumDefinition["AcquisitionMode"] = m_DetectorModes[detectorMode];
     m_SpectrumDefinition["DwellTime"] = acquireTime;
 
-    int centerX = detectorSizeX / 2;
-    int centerY = detectorSizeY / 2;
+    m_SpectrumDefinition["ConstantParameters"] = {
+        {"PositionX", focalPositionX},
+        {"PositionY", focalPositionY},
+        {"WorkingDistance", focalPositionZ}
+    };
+
     m_SpectrumDefinition["DetectorAreas"] = {
         {"ROI", {
-                    {"LowX", (minX - centerX) / m_PixelDensity},
-                    {"LowY", (minY - centerY) / m_PixelDensity},
-                    {"HighX",(minX + sizeX - centerX) / m_PixelDensity},
-                    {"HighY",(minY + sizeY - centerY) / m_PixelDensity}
+                    {"LowX", (minX - m_ChannelArea["CenterX"] - 1) / m_PixelDensity},
+                    {"LowY", (minY - m_ChannelArea["CenterY"]) / m_PixelDensity},
+                    {"HighX",(minX + sizeX - m_ChannelArea["CenterX"] - 1) / m_PixelDensity},
+                    {"HighY",(minY + sizeY - m_ChannelArea["CenterY"]) / m_PixelDensity}
         }}
     };
 

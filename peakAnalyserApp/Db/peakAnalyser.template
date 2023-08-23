@@ -3,6 +3,24 @@
 
 include "ADBase.template"
 
+########## Override Some areaDetector Fields ##########
+record(mbbo, "$(P)$(R)ImageMode")
+{
+    field(VAL, "0")
+}
+
+record(mbbo, "$(P)$(R)ColorMode")
+{
+    field(VAL,  "0")
+    field(DISA, "1")
+}
+
+record(mbbo, "$(P)$(R)DataType")
+{
+    field(VAL,  "8") # Float32
+    field(DISA, "1")
+}
+
 ########## Disable Redundant areaDetector Fields #########
 record(ao, "$(P)$(R)AcquireTime")
 {
@@ -105,6 +123,19 @@ record(longin, "$(P)$(R)STEPS_COUNTER_RBV")
   field(SCAN, "I/O Intr")
 }
 
+# Progress in percent
+record(ai, "$(P)$(R)PROGRESS")
+{
+  field(DESC, "Progress in percent")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ACQ_PROGRESS")
+  field(SCAN, "I/O Intr")
+  field(LOPR, "0")
+  field(HOPR, "100")
+  field(PREC, "1")
+  field(EGU,  "%")
+}
+
 ######################## Modes ###########################
 
 # Currently selected element set
@@ -116,7 +147,7 @@ record(mbbi, "$(P)$(R)ELEMENT_SET_RBV")
   field(SCAN, "I/O Intr")
 }
 
-# Selecr data acquisition mode
+# Select data acquisition mode
 record(mbbo, "$(P)$(R)ACQ_MODE")
 {
   field(DESC, "Acquisition Mode")
@@ -130,6 +161,7 @@ record(mbbo, "$(P)$(R)ACQ_MODE")
   field(TWVL, "2")
   field(THST, "Sweep Energy & ThetaY")
   field(THVL, "3")
+  info(asyn:READBACK, "1")
 }
 
 record(mbbi, "$(P)$(R)ACQ_MODE_RBV")
@@ -159,6 +191,7 @@ record(mbbo, "$(P)$(R)ENERGY_MODE")
   field(ONST, "Binding")
   field(ONVL, "1")
   field(PINI, "YES")
+  info(asyn:READBACK, "1")
 }
 
 record(mbbi, "$(P)$(R)ENERGY_MODE_RBV")
@@ -179,7 +212,8 @@ record(mbbo, "$(P)$(R)LENS_MODE")
   field(DESC, "Lens Mode")
   field(DTYP, "asynInt32")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))LENS_MODES")
-#  field(PINI, "YES")
+  field(PINI, "YES")
+  info(asyn:READBACK, "1")
 }
 
 record(mbbi, "$(P)$(R)LENS_MODE_RBV")
@@ -196,7 +230,8 @@ record(mbbo, "$(P)$(R)DETECTOR_MODE")
   field(DESC, "Detector Mode")
   field(DTYP, "asynInt32")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))DETECTOR_MODE")
-#  field(PINI, "YES")
+  field(PINI, "YES")
+  info(asyn:READBACK, "1")
 }
 
 record(mbbi, "$(P)$(R)DETECTOR_MODE_RBV")
@@ -213,7 +248,7 @@ record(mbbo, "$(P)$(R)PASS_ENERGY")
   field(DESC, "Pass Energy")
   field(DTYP, "asynInt32")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))PASS_ENERGY")
-#  field(PINI, "YES")
+  field(PINI, "YES")
 }
 
 # Report back current pass energy
@@ -225,14 +260,33 @@ record(mbbi, "$(P)$(R)PASS_ENERGY_RBV")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))PASS_ENERGY")
 }
 
+# Entrace slit
+record(mbbo, "$(P)$(R)SLIT")
+{
+  field(DESC, "Entrance Slit")
+  field(DTYP, "asynInt32")
+  field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))SLIT")
+  info(asyn:READBACK, "1")
+}
+
+record(mbbi, "$(P)$(R)SLIT_RBV")
+{
+  field(DESC, "Entrance Slit Readback")
+  field(DTYP, "asynInt32")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))SLIT")
+  field(SCAN, "I/O Intr")
+}
+
 # Excitation energy
 record(ao, "$(P)$(R)EXCITATION_ENERGY")
 {
   field(DESC, "Excitation Energy")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))EXCITATION_ENERGY")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(PINI, "YES")
+  info(asyn:READBACK, "1")
 }
 
 record(ai, "$(P)$(R)EXCITATION_ENERGY_RBV")
@@ -241,6 +295,7 @@ record(ai, "$(P)$(R)EXCITATION_ENERGY_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))EXCITATION_ENERGY")
   field(SCAN, "I/O Intr")
+  field(EGU,  "eV")
   field(PREC, "3")
 }
 
@@ -250,9 +305,11 @@ record(ao, "$(P)$(R)WORK_FUNCTION")
   field(DESC, "Work Function")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))WORK_FUNCTION")
+  field(EGU,  "eV")
   field(PREC, "1")
   field(VAL,  "5")
   field(PINI, "YES")
+  info(asyn:READBACK, "1")
 }
 
 record(ai, "$(P)$(R)WORK_FUNCTION_RBV")
@@ -261,7 +318,74 @@ record(ai, "$(P)$(R)WORK_FUNCTION_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))WORK_FUNCTION")
   field(SCAN, "I/O Intr")
+  field(EGU,  "eV")
   field(PREC, "1")
+}
+
+# Focal position X
+record(ao, "$(P)$(R)FOCAL_POS_X")
+{
+  field(DESC, "Focal Position X")
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))FOCAL_POS_X")
+  field(EGU,  "mm")
+  field(PREC, "3")
+  field(PINI, "YES")
+  info(asyn:READBACK, "1")
+}
+
+record(ai, "$(P)$(R)FOCAL_POS_X_RBV")
+{
+  field(DESC, "Focal Position X Readback")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))FOCAL_POS_X")
+  field(SCAN, "I/O Intr")
+  field(EGU,  "mm")
+  field(PREC, "3")
+}
+
+# Focal position Y
+record(ao, "$(P)$(R)FOCAL_POS_Y")
+{
+  field(DESC, "Focal Position Y")
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))FOCAL_POS_Y")
+  field(EGU,  "mm")
+  field(PREC, "3")
+  field(PINI, "YES")
+  info(asyn:READBACK, "1")
+}
+
+record(ai, "$(P)$(R)FOCAL_POS_Y_RBV")
+{
+  field(DESC, "Focal Position Y Readback")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))FOCAL_POS_Y")
+  field(SCAN, "I/O Intr")
+  field(EGU,  "mm")
+  field(PREC, "3")
+}
+
+# Focal position Z
+record(ao, "$(P)$(R)FOCAL_POS_Z")
+{
+  field(DESC, "Focal Position Z")
+  field(DTYP, "asynFloat64")
+  field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))FOCAL_POS_Z")
+  field(EGU,  "mm")
+  field(PREC, "3")
+  field(PINI, "YES")
+  info(asyn:READBACK, "1")
+}
+
+record(ai, "$(P)$(R)FOCAL_POS_Z_RBV")
+{
+  field(DESC, "Focal Position Z Readback")
+  field(DTYP, "asynFloat64")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))FOCAL_POS_Z")
+  field(SCAN, "I/O Intr")
+  field(EGU,  "mm")
+  field(PREC, "3")
 }
 
 ###################### Energy (eV) ########################
@@ -272,6 +396,7 @@ record(ao, "$(P)$(R)LOW_ENERGY")
   field(DESC, "Low Energy")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))LOW_ENERGY")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "82")
@@ -283,6 +408,7 @@ record(ai, "$(P)$(R)LOW_ENERGY_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))LOW_ENERGY")
   field(SCAN, "I/O Intr")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(FLNK, "$(P)$(R)ENERGY_WIDTH_RBV")
 }
@@ -293,6 +419,7 @@ record(ao, "$(P)$(R)CENTRE_ENERGY")
   field(DESC, "Centre Energy")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))CENTER_ENERGY")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "84")
@@ -304,6 +431,7 @@ record(ai, "$(P)$(R)CENTRE_ENERGY_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))CENTER_ENERGY")
   field(SCAN, "I/O Intr")
+  field(EGU,  "eV")
   field(PREC, "3")
 }
 
@@ -313,6 +441,7 @@ record(ao, "$(P)$(R)HIGH_ENERGY")
   field(DESC, "High Energy")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))HIGH_ENERGY")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "86")
@@ -324,6 +453,7 @@ record(ai, "$(P)$(R)HIGH_ENERGY_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))HIGH_ENERGY")
   field(SCAN, "I/O Intr")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(FLNK, "$(P)$(R)ENERGY_WIDTH_RBV")
 }
@@ -338,6 +468,17 @@ record(calc, "$(P)$(R)ENERGY_WIDTH_RBV")
   field(INPA, "$(P)$(R)LOW_ENERGY_RBV")
   field(INPB, "$(P)$(R)HIGH_ENERGY_RBV")
   field(PREC, "3")
+}
+
+# Scaling
+record(waveform, "$(P)$(R)ENERGY_SCALE_RBV")
+{
+  field(DESC, "Energy Scale")
+  field(DTYP, "asynFloat64ArrayIn")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ACQ_ENERGY_SCALE")
+  field(SCAN, "I/O Intr")
+  field(FTVL, "DOUBLE")
+  field(NELM, "50000")
 }
 
 ###################### Slices ########################
@@ -366,7 +507,7 @@ record(ao, "$(P)$(R)CENTRE_SLICE")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))CENTER_SLICE")
   field(PREC, "3")
-#  field(PINI, "YES")
+  field(PINI, "YES")
   field(VAL,  "0")
 }
 
@@ -401,6 +542,17 @@ record(calc, "$(P)$(R)SLICE_WIDTH_RBV")
   field(PREC, "3")
 }
 
+# Scaling
+record(waveform, "$(P)$(R)SLICE_SCALE_RBV")
+{
+  field(DESC, "Slice Scale")
+  field(DTYP, "asynFloat64ArrayIn")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ACQ_SLICE_SCALE")
+  field(SCAN, "I/O Intr")
+  field(FTVL, "DOUBLE")
+  field(NELM, "50000")
+}
+
 ###################### Theta Y (degree) ########################
 record(bi, "$(P)$(R)WITH_THETA_Y_RBV")
 {
@@ -416,6 +568,7 @@ record(ao, "$(P)$(R)LOW_THETA_Y")
   field(DESC, "Low Theta Y")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))LOW_ANGLE_Y")
+  field(EGU,  "deg")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "-10")
@@ -427,6 +580,7 @@ record(ai, "$(P)$(R)LOW_THETA_Y_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))LOW_ANGLE_Y")
   field(SCAN, "I/O Intr")
+  field(EGU,  "deg")
   field(PREC, "3")
   field(FLNK, "$(P)$(R)THETA_Y_WIDTH_RBV")
 }
@@ -437,6 +591,7 @@ record(ao, "$(P)$(R)CENTRE_THETA_Y")
   field(DESC, "Centre Theta Y")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))CENTER_ANGLE_Y")
+  field(EGU,  "deg")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "0")
@@ -448,6 +603,7 @@ record(ai, "$(P)$(R)CENTRE_THETA_Y_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))CENTER_ANGLE_Y")
   field(SCAN, "I/O Intr")
+  field(EGU,  "deg")
   field(PREC, "3")
 }
 
@@ -457,6 +613,7 @@ record(ao, "$(P)$(R)HIGH_THETA_Y")
   field(DESC, "High Theta Y")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))HIGH_ANGLE_Y")
+  field(EGU,  "deg")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "10")
@@ -468,6 +625,7 @@ record(ai, "$(P)$(R)HIGH_THETA_Y_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))HIGH_ANGLE_Y")
   field(SCAN, "I/O Intr")
+  field(EGU,  "deg")
   field(PREC, "3")
   field(FLNK, "$(P)$(R)THETA_Y_WIDTH_RBV")
 }
@@ -492,6 +650,7 @@ record(ao, "$(P)$(R)STEP_SIZE")
   field(DESC, "Energy Step Size")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ENERGY_STEP")
+  field(EGU,  "eV")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "0.2")
@@ -503,6 +662,7 @@ record(ai, "$(P)$(R)STEP_SIZE_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ENERGY_STEP")
   field(SCAN, "I/O Intr")
+  field(EGU,  "eV")
   field(PREC, "3")
 }
 
@@ -522,6 +682,7 @@ record(ao, "$(P)$(R)THETA_Y_STEP_SIZE")
   field(DESC, "ThetaY Step Size")
   field(DTYP, "asynFloat64")
   field(OUT,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ANGLE_Y_STEP")
+  field(EGU,  "deg")
   field(PREC, "3")
   field(PINI, "YES")
   field(VAL,  "1")
@@ -533,6 +694,7 @@ record(ai, "$(P)$(R)THETA_Y_STEP_SIZE_RBV")
   field(DTYP, "asynFloat64")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ANGLE_Y_STEP")
   field(SCAN, "I/O Intr")
+  field(EGU,  "deg")
   field(PREC, "3")
 }
 
@@ -563,6 +725,19 @@ record(longin, "$(P)$(R)THETA_Y_COUNT_RBV")
   field(DTYP, "asynInt32")
   field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ANGLE_Y_COUNT")
   field(SCAN, "I/O Intr")
+}
+
+################## Acquired Data ####################
+
+# Acquired integrated spectrum of data
+record(waveform, "$(P)$(R)SPECTRUM")
+{
+  field(DESC, "Spectrum")
+  field(DTYP, "asynFloat64ArrayIn")
+  field(INP,  "@asyn($(PORT),$(ADDR=0),$(TIMEOUT=1))ACQ_SPECTRUM")
+  field(SCAN, "I/O Intr")
+  field(FTVL, "DOUBLE")
+  field(NELM, "50000")
 }
 
 ################## Detector Bin ####################

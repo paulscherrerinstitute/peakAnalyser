@@ -7,11 +7,17 @@ The latest untagged master branch can be obtained at https://github.com/paulsche
 Release Notes
 =============
 
-2.2.0 (October XX, 2021)
+3.0.0 (October XX, 2023)
 ------------------------
 
+* Fix ROI calculation.
 * New records to indicate whether Theta X/Y angles are supported by the current lens mode.
-* Fix ROI calculation in PEAK 1.0.0.0-alpha.19.
+* New records to set focal positions.
+* New records for the live spectrum.
+* enum DetectorMode {ADC, Pulse} renamed to AcquisitionMode {Image, Event}.
+* Use proxy URIs for instrument servers when client and server run on different hosts for PEAK 1.3.
+* The driver port now has two addresses. Final image update is on addr=0 and live image update on addr=1.
+* Requires PEAK 1.3.
 
 2.1.0 (September 18, 2021)
 --------------------------

@@ -16,7 +16,7 @@ void base64_decode(const std::string&, unsigned char *, size_t);
  * PeakSpectrum
  *
  */
-void PeakSpectrum::fromSpectrumChannel(const nlohmann::json& channel)
+void PeakSpectrum::fromSpectrumChannel(const nlohmann::json& channel, std::string serverUri)
 {
     rank = 0;
     const nlohmann::json& axes = channel["SpectrumChannelSettings"]["RequestedAxes"];
@@ -142,7 +142,7 @@ json PeakAPI::query (const std::string& property, const json& filter)
     return call("Query", param)[property];
 }
 
-std::string PeakAPI::subscribe(const std::string& notification, JsonRPCClientI::Callback callback, AttachmentMode attachmentMode)
+std::string PeakAPI::subscribeToObservable(const std::string& observable, JsonRPCClientI::Callback callback, AttachmentMode attachmentMode)
 {
     static size_t id = 0;
 
@@ -151,17 +151,17 @@ std::string PeakAPI::subscribe(const std::string& notification, JsonRPCClientI::
         { "AttachmentCompressionMode", "None"} // Options: None, Deflate, GZip, Brotli
     };
 
-    std::string method = notification + std::to_string(id++);
+    std::string method = observable + std::to_string(id++);
     std::string guid;
     if (m_rpcClient->scheme() == "http://")
-        guid = call("Subscribe",
-                    notification,
+        guid = call("SubscribeToObservable",
+                    observable,
                     method,
                     attachmentSetting,
                     m_rpcClient->notificationServer()).get<std::string>();
     else
-        guid = call("Subscribe",
-                    notification,
+        guid = call("SubscribeToObservable",
+                    observable,
                     method,
                     attachmentSetting).get<std::string>();
 
@@ -344,7 +344,7 @@ bool PeakAnalyserClient::canMeasure ()
 
 void PeakAnalyserClient::startMeasurement ()
 {
-    call("StartMeasurement", "Sequence", "Acquisition");
+    call("StartMeasurement");
 }
 
 void PeakAnalyserClient::finishMeasurement ()
