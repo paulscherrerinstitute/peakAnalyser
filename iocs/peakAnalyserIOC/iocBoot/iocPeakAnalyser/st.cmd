@@ -41,12 +41,18 @@ asynSetMinTimerPeriod(0.001)
 # Create a peakAnalyser driver
 # peakAnalyserConfig(const char *portName, const char *hostAddress,
 #                   int maxBuffers, int maxMemory, int priority, int stackSize)
-peakAnalyserConfig("$(PORT)", "http://127.0.0.1:8080", 0, 0)
+peakAnalyserConfig("$(PORT)", "ws://127.0.0.1:8087", 0, 0)
 
 dbLoadRecords("$(PEAK_ANALYSER)/db/peakAnalyser.template","P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 
-# Create a standard arrays plugin, set it to get data from peakAnalyser driver.
+# Create a standard arrays plugin, set it to get final image from peakAnalyser driver(addr=0).
 NDStdArraysConfigure("Image1", 20, 0, "$(PORT)", 0, 0, 0, 0, 0, 5)
+
+# This creates a waveform large enough for 5000x200x10 arrays of 32-bit float (5000 in energy, 200 in theta X and 10 in theta Y).
+dbLoadRecords("NDStdArrays.template", "P=$(PREFIX),R=image1:,PORT=Image1,ADDR=0,TIMEOUT=1,NDARRAY_PORT=$(PORT),TYPE=Float32,FTVL=FLOAT,NELEMENTS=10000000")
+
+# Create the second standard arrays plugin, set it to get lives images from peakAnalyser driver(addr=1).
+NDStdArraysConfigure("Image1", 20, 0, "$(PORT)", 1, 0, 0, 0, 0, 5)
 
 # This creates a waveform large enough for 5000x200x10 arrays of 32-bit float (5000 in energy, 200 in theta X and 10 in theta Y).
 dbLoadRecords("NDStdArrays.template", "P=$(PREFIX),R=image1:,PORT=Image1,ADDR=0,TIMEOUT=1,NDARRAY_PORT=$(PORT),TYPE=Float32,FTVL=FLOAT,NELEMENTS=10000000")
