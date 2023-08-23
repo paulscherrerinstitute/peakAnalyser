@@ -379,13 +379,19 @@ void PeakAnalyserClient::acquire (const std::string& spectrumId)
 
 PeakSpectrum PeakAnalyserClient::getMeasuredSpectrum (const std::string& spectrumId)
 {
-   auto spectrumData = PeakSpectrum();
-   const json& spectrum = call("GetMeasuredSpectrum", spectrumId);
-   for (auto& chan: spectrum["SpectrumChannels"]) {
-        spectrumData.fromSpectrumChannel(chan);
-        break;
-   }
-   return spectrumData;
+    auto spectrumData = PeakSpectrum();
+    PeakAnalyserClient *analyser = this;
+
+    /* WebSocket client cannot get measured data directly, so we user an HTTP client. */
+    if (m_rpcClient->scheme() == "ws://")
+        analyser = new PeakAnalyserClient("http" + m_uri.substr(2));
+
+    json spectrum = analyser->call("GetMeasuredSpectrum", spectrumId);
+    spectrumData.fromSpectrumChannel(spectrum["SpectrumChannels"].front());
+
+    if (analyser != this) delete analyser;
+
+    return spectrumData;
 }
 
 /*
