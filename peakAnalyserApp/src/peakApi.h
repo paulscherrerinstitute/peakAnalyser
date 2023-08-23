@@ -18,6 +18,7 @@ struct PeakSpectrum
 
     void fromSpectrumChannel(const nlohmann::json& channel);
     void createAxis(const nlohmann::json& axis, std::vector<double>& axisData);
+    std::vector<double> integrate();
 };
 
 /*!

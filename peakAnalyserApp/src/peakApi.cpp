@@ -64,6 +64,23 @@ void PeakSpectrum::createAxis(const nlohmann::json& axis, std::vector<double>& a
     }
 }
 
+std::vector<double> PeakSpectrum::integrate()
+{
+    size_t width = dims[0];
+    size_t height = dims[1];
+    std::vector<double> spectrum(width);
+
+    /* Address of the image data, in case of 3D dataset, the last frame */
+    size_t frame = (rank==3 ? dims[2]-1 : 0);
+    float *image = data.data() + width*height*frame;
+
+    for (size_t j=0; j<height; j++)
+        for (size_t i=0; i<width; i++)
+            spectrum[i] += image[j*width + i];
+
+    return spectrum;
+}
+
 /*
  * PeakAPI
  *
