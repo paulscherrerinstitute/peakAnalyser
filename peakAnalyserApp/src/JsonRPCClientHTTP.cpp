@@ -298,7 +298,7 @@ void JsonRPCClientHTTP::connectionCallback()
 json JsonRPCClientHTTP::call(const std::string& method, const json& params)
 {
     std::map<std::string, std::string> headers =  {
-        {"Attachment-Mode", "Inline"},
+        {"Attachment-Mode", "Http"},
         {"Content-Type", "application/json"}
     };
 
