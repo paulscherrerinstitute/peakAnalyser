@@ -43,6 +43,21 @@ void PeakSpectrum::fromSpectrumChannel(const nlohmann::json& channel)
             } else {
                 std::cerr << "Error in reading file " << fname << std::endl;
             }
+        } else if (attachment["Mode"] == "Http") {
+            std::string uri = attachment["Address"].get<std::string>();
+            size_t pos = uri.find("/attachments");
+            if (pos != std::string::npos) {
+                std::string path = uri.substr(pos);
+                /* The spectrum URL is normally of form "http://127.0.0.1:59806/attachments/86ed5f36-34da-4d52-b5c1-442e65bb5e19.bin"
+                   When connecting via manager server's reverse proxy, the host and port will be replaced with
+                   manager server's host and port.*/
+                if (serverUri.empty())
+                    serverUri = uri.substr(0, pos);
+                /* Get the data via HTTP request */
+                std::string value;
+                if (HTTPClient(serverUri).get(path, {}, value))
+                    memcpy( (void*) data.data(), value.data(), value.size());
+            }
         }
     }
 }

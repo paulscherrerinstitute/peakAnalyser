@@ -16,7 +16,7 @@ struct PeakSpectrum
     std::vector<double> zaxis;
     std::vector<float> data;
 
-    void fromSpectrumChannel(const nlohmann::json& channel);
+    void fromSpectrumChannel(const nlohmann::json& channel, const std::string serverUri="");
     void createAxis(const nlohmann::json& axis, std::vector<double>& axisData);
     std::vector<double> integrate();
 };
