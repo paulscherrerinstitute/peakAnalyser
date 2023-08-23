@@ -103,6 +103,13 @@ std::vector<double> PeakSpectrum::integrate()
 PeakAPI::PeakAPI(const std::string& uri)
 {
     m_uri = uri;
+
+    // Remove trailing '/'
+    std::size_t pos = m_uri.find_last_not_of('/');
+    if (pos != std::string::npos)
+        m_uri.erase(pos+1);
+
+    // Append "/api" path
     if (m_uri.rfind("/api") != m_uri.size() - 4)
         m_uri += "/api";
 
