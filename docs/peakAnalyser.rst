@@ -19,11 +19,12 @@ Introduction
 ------------
 
 This is an `EPICS`_ `areaDetector`_ driver for `Scienta Omicron`_ analysers using the `PEAK`_ API.
-It has been tested with PEAK 1.0.0.0-beta.1 with dummy camera configuration.
+It has been tested with PEAK software release 1.3.0 with a DA30L analyser.
+Due to the many changes in PEAK API, the minimum required PEAK version is 1.3.0.
 
 The PEAK API uses JSON-RPC protocol and supports both HTTP and WebSocket. This driver will choose
-the implementation based on the host address, i.e. *ws://127.0.0.1:8080* for WebSocket and *http://127.0.0.1:8080*
-for HTTP. However do notice certain :ref:`issues <known_problems>` regarding both implementations.
+the implementation based on the host address, i.e. *ws://127.0.0.1:8087* for WebSocket and *http://127.0.0.1:8087*
+for HTTP.
 
 Implementation of standard driver parameters
 --------------------------------------------
@@ -112,7 +113,9 @@ with the actual value.
   * - $(P)$(R)STEPS_COUNTER_RBV
     - longin
     - Number of steps that analyser has acquired for the current iteration.
-
+  * - $(P)$(R)PROGRESS
+    - ai
+    - The total progress in percentage of the current acquisition.
 
 Analyser modes settings
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -153,6 +156,18 @@ Analyser modes settings
     - ao, ai
     - Photon energy, used to calculate kinetic energy from
       binding energy input. i.e. ``kinetic = excitation - work + binding``.
+  * - $(P)$(R)SLIT, $(P)$(R)SLIT_RBV
+    - mbbo, mbbi
+    - The current entrance slit.
+  * - $(P)$(R)FOCAL_POS_X, $(P)$(R)FOCAL_POS_X_RBV
+    - ao, ai
+    - The elctron optical focal position on the sample in X direction.
+  * - $(P)$(R)FOCAL_POS_Y, $(P)$(R)FOCAL_POS_Y_RBV
+    - ao, ai
+    - The elctron optical focal position on the sample in Y direction.
+  * - $(P)$(R)FOCAL_POS_Z, $(P)$(R)FOCAL_POS_Z_RBV
+    - ao, ai
+    - The elctron optical focal distance from the sample surface.
   * - $(P)$(R)ELEMENT_SET_RBV
     - mbbi
     - Current analyser element set name.
@@ -163,8 +178,8 @@ Analyser modes settings
   * - $(P)$(R)DETECTOR_MODE, $(P)$(R)DETECTOR_MODE_RBV
     - mbbo, mbbi
     - Specify the detector counting mode to be used in the acquisition.
-        * ADC - Use camera counts
-        * Pulse - Detect electron events
+        * Image - Use camera counts
+        * Events - Detect electron events
   * - $(P)$(R)PASS_ENERGY, $(P)$(R)PASS_ENERGY_RBV
     - mbbo, mbbi
     - Specify the pass energy to be used in the acquisition.
@@ -228,6 +243,29 @@ updated again to reflect the actual measured values.
   * - $(P)$(R)STEP_THETA_Y, $(R)$(R)STEP_THETA_Y_RBV
   * - $(P)$(R)CENTER_THETA_Y, $(R)$(R)CENTER_THETA_Y_RBV
 
+Live Spectrum
+^^^^^^^^^^^^^
+
+During acquisition, the driver polls the live spectrum at maximum 1Hz. The NDArray image is available on addr=0.
+The following records describe the integrated spectrum.
+
+.. cssclass:: table-bordered table-striped table-hover
+.. flat-table::
+  :header-rows: 1
+  :widths: 20 10 70
+
+  * - EPICS record name
+    - EPICS record type
+    - Description
+  * - $(P)$(R)SPECTRUM
+    - waveform
+    - The integrated spectrum along the energy axis, updated at maximum 1Hz during acquistion.
+  * - $(P)$(R)ENERGY_SCALE_RBV
+    - waveform
+    - The scale array along the energy axis.
+  * - $(P)$(R)SLICE_SCALE_RBV
+    - waveform
+    - The scale array along the theta X axis.
 
 Electronics control
 ^^^^^^^^^^^^^^^^^^^
@@ -253,17 +291,10 @@ either from C/C++ or from the EPICS IOC shell::
                          const char *hostAddress)
 
 * portName: asym port name this driver creates
-* hostAddress: PEAK manager server address, e.g. ws://127.0.0.1:8080, http://127.0.0.1:8080
+* hostAddress: PEAK manager server address, e.g. ws://127.0.0.1:8087, http://127.0.0.1:8087
 
 
 MEDM screen
 -----------
 
 .. image:: _static/peakAnalyser.png
-
-.. _known_problems:
-
-Known problems
---------------
-
-* PEAK client over WebSocket, as of PEAK 1.0.0.0-beta.1, cannot retrieve the spectrum data over WebSocket.
