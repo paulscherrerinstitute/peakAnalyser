@@ -2095,6 +2095,7 @@ menu {
 		yaxis=0
 		yside=0
 	}
+	countPvName="$(P)$(R)STEPS_RBV"
 }
 bar {
 	object {
