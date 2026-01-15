@@ -1,7 +1,7 @@
 include /ioc/tools/driver.makefile
 PROJECT = peakAnalyser
 BUILDCLASSES = Linux WIN32
-ARCH_FILTER = win% ${EPICS_HOST_ARCH}
+ARCH_FILTER = win% RHEL% deb%
 EXCLUDE_VERSIONS = 3
 
 USR_CPPFLAGS += -DJSON_USE_IMPLICIT_CONVERSIONS=0
