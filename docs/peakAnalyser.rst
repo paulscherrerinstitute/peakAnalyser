@@ -226,22 +226,22 @@ updated again to reflect the actual measured values.
     - :rspan:`3` ao, ai
     - :rspan:`3` Specify the list of energies to acquire.
   * - $(P)$(R)HIGH_ENERGY, $(R)$(R)HIGH_ENERGY_RBV
-  * - $(P)$(R)STEP_ENERGY, $(R)$(R)STEP_ENERGY_RBV
-  * - $(P)$(R)CENTER_ENERGY, $(R)$(R)CENTER_ENERGY_RBV
+  * - $(P)$(R)STEP_SIZE, $(R)$(R)STEP_SIZE_RBV
+  * - $(P)$(R)CENTRE_ENERGY, $(R)$(R)CENTRE_ENERGY_RBV
   * - $(R)$(R)LOW_SLICE_RBV
     - :rspan:`3` ao, ai
     - :rspan:`3` Analyser theta X range. All values are readback only,
       except that the center value can be specified in certain lens mode.
   * - $(R)$(R)HIGH_SLICE_RBV
-  * - $(R)$(R)STEP_SLICE_RBV
-  * - $(P)$(R)CENTER_SLICE, $(R)$(R)CENTER_SLICE_RBV
+  * - $(R)$(R)SLICE_STEP_SIZE_RBV
+  * - $(P)$(R)CENTRE_SLICE, $(R)$(R)CENTRE_SLICE_RBV
   * - $(P)$(R)LOW_THETA_Y, $(R)$(R)LOW_THETA_Y_RBV
     - :rspan:`3` ao, ai
-    - :rspan:`3` Specify the list of theta Y angels to acquire.
+    - :rspan:`3` Specify the list of theta Y angles to acquire.
       These values are used only for lens modes that support Theta Y.
   * - $(P)$(R)HIGH_THETA_Y, $(R)$(R)HIGH_THETA_Y_RBV
-  * - $(P)$(R)STEP_THETA_Y, $(R)$(R)STEP_THETA_Y_RBV
-  * - $(P)$(R)CENTER_THETA_Y, $(R)$(R)CENTER_THETA_Y_RBV
+  * - $(P)$(R)THETA_Y_STEP_SIZE, $(R)$(R)THETA_Y_STEP_SIZE_RBV
+  * - $(P)$(R)CENTRE_THETA_Y, $(R)$(R)CENTRE_THETA_Y_RBV
 
 Live Spectrum
 ^^^^^^^^^^^^^
